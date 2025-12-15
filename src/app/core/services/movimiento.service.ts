@@ -19,7 +19,7 @@ export class MovimientoService {
     const producto = this.productoService.getById(dto.productoId);
     
     const nuevoMovimiento: Movimiento = {
-      id: `MOV-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      id: Date.now(),
       ...dto,
       nombreProducto: producto?.name || 'Producto desconocido',
       fecha: new Date(),

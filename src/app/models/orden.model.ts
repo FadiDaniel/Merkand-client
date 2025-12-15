@@ -1,5 +1,5 @@
 export interface Orden {
-  id: string;
+  id: number;
   numeroOrden: string;
   tipo: 'entrada' | 'salida';
   fecha: Date;

@@ -1,7 +1,9 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { User, LoginCredentials, AuthState } from '../../models/user.model';
+import { User, LoginCredentials, AuthState, AuthResponse } from '../../models/user.model';
 import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -22,33 +24,32 @@ export class AuthService {
     this.loadAuthState();
   }
 
-  login(credentials: LoginCredentials): boolean {
-    const validUsers = [
-      { username: 'admin', password: 'admin123', isAdmin: true, fullName: 'Administrador' },
-      { username: 'usuario', password: 'user123', isAdmin: false, fullName: 'Usuario Regular' }
-    ];
+  login(credentials: LoginCredentials): Observable<boolean> {
+    return this.http.post<AuthResponse>(this.apiUrl + '/login', credentials).pipe(
+      tap(response => {
+        //console.log('Backend response:', response);
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          
+          const authenticatedUser: User = response.user || {
+            username: credentials.username,
+            isAdmin: credentials.username === 'admin', 
+            fullName: credentials.username
+          };
 
-    const user = validUsers.find(
-      u => u.username === credentials.username && u.password === credentials.password
+          this.authState.set({
+            user: authenticatedUser,
+            isAuthenticated: true
+          });
+
+          this.saveAuthState();
+        }
+      }),
+      map(response => {
+        // Return true if token exists
+        return !!(response && response.token);
+      })
     );
-
-    if (user) {
-      const authenticatedUser: User = {
-        username: user.username,
-        isAdmin: user.isAdmin,
-        fullName: user.fullName
-      };
-
-      this.authState.set({
-        user: authenticatedUser,
-        isAuthenticated: true
-      });
-
-      this.saveAuthState();
-      return true;
-    }
-
-    return false;
   }
 
   logout(): void {
@@ -81,5 +82,10 @@ export class AuthService {
 
   private clearAuthState(): void {
     localStorage.removeItem('authState');
+    localStorage.removeItem('token');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 }

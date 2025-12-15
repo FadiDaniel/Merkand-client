@@ -44,27 +44,35 @@ export class LoginComponent {
     }
 
     this.isLoading.set(true);
+    
 
-    // Simular delay de red
-    setTimeout(() => {
-      const success = this.authService.login({
-        username: this.username(),
-        password: this.password()
-      });
-
-      this.isLoading.set(false);
-
-      if (success) {
-        this.snackBar.open('¡Bienvenido!', 'Cerrar', {
-          duration: 2000
-        });
-        this.router.navigate(['/dashboard']);
-      } else {
-        this.snackBar.open('Credenciales inválidas', 'Cerrar', {
-          duration: 3000
+    this.authService.login({
+      username: this.username(),
+      password: this.password()
+    }).subscribe({
+      next: (success) => {
+        this.isLoading.set(false);
+        if (success) {
+          this.snackBar.open('¡Bienvenido!', 'Cerrar', {
+            duration: 2000
+          });
+          this.router.navigate(['/dashboard']);
+        } else {
+          console.log(success);
+          this.snackBar.open('Credenciales inválidas' + success, 'Cerrar', {
+            duration: 3000
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Login error details:', err);
+        this.isLoading.set(false);
+        const errorMessage = err.error?.message || err.message || 'Error desconocido';
+        this.snackBar.open(`Error de conexión: ${errorMessage}`, 'Cerrar', {
+          duration: 5000
         });
       }
-    }, 500);
+    });
   }
 
   togglePasswordVisibility(): void {

@@ -12,7 +12,7 @@ export interface ReporteVentas {
 }
 
 export interface ReporteInventario {
-  productoId: string;
+  productoId: number;
   nombreProducto: string;
   stock: number;
   stockMinimo: number;

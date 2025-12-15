@@ -16,7 +16,7 @@ export class ProveedorService {
     return this.proveedores();
   }
 
-  getById(id: string): Proveedor | undefined {
+  getById(id: number): Proveedor | undefined {
     return this.proveedores().find(p => p.id === id);
   }
 
@@ -49,9 +49,9 @@ export class ProveedorService {
     return updated;
   }
 
-  delete(id: string): boolean {
+  delete(id: number): boolean {
     // Soft delete
-    const index = this.proveedores().findIndex(p => p.id === id);
+    const index = this.proveedores().findIndex(p => p.id == id);
     if (index === -1) return false;
 
     this.proveedores.update(prev => {
@@ -65,8 +65,8 @@ export class ProveedorService {
   }
 
   // Helpers
-  private generateId(): string {
-    return `PROV-${Date.now()}`;
+  private generateId(): number {
+    return this.proveedores().length + 1;
   }
 
   private saveProveedores(): void {
@@ -84,7 +84,7 @@ export class ProveedorService {
   private getInitialData(): Proveedor[] {
     return [
       {
-        id: 'PROV-001',
+        id: 1,
         nombre: 'Dell Inc.',
         contacto: 'Juan Pérez',
         telefono: '555-0101',
@@ -96,7 +96,7 @@ export class ProveedorService {
         fechaCreacion: new Date()
       },
       {
-        id: 'PROV-002',
+        id: 2,
         nombre: 'Logitech',
         contacto: 'Maria García',
         telefono: '555-0202',
@@ -108,7 +108,7 @@ export class ProveedorService {
         fechaCreacion: new Date()
       },
       {
-        id: 'PROV-003',
+        id: 3,
         nombre: 'Keychron',
         contacto: 'Soporte Ventas',
         telefono: '555-0303',

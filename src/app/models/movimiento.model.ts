@@ -1,5 +1,5 @@
 export interface Movimiento {
-  id: string;
+  id: number;
   tipo: 'entrada' | 'salida' | 'ajuste' | 'inventario-inicial';
   productoId: number;
   nombreProducto?: string; // Opcional si no lo tenemos a mano siempre, o el servicio lo llena

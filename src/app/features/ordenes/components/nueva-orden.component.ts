@@ -70,7 +70,7 @@ import { OrdenProducto } from '../../../models/orden.model';
                 <mat-select [(ngModel)]="productoSeleccionado" name="producto" [disabled]="bloquearSeleccionProductos()">
                   @for (producto of productosFiltrados(); track producto.id) {
                     <mat-option [value]="producto.id">
-                      {{ producto.nombre }} 
+                      {{ producto.name }} 
                       @if (tipoOrden() === 'salida') { (Stock: {{ producto.stock }}) }
                     </mat-option>
                   }
@@ -222,10 +222,10 @@ export class NuevaOrdenComponent {
   displayedColumns: string[] = ['nombre', 'cantidad', 'precio', 'subtotal', 'acciones'];
   
   tipoOrden = signal<'entrada' | 'salida'>('entrada');
-  proveedorId = signal('');
+  proveedorId = signal(null);
   clienteRef = signal('');
   
-  productoSeleccionado = signal('');
+  productoSeleccionado = signal(null);
   cantidad = signal(1);
   productosOrden = signal<OrdenProducto[]>([]);
 
@@ -237,17 +237,9 @@ export class NuevaOrdenComponent {
     
     // Si es entrada y hay proveedor seleccionado, filtrar por ese proveedor
     if (this.tipoOrden() === 'entrada' && this.proveedorId()) {
-      // Asumimos que producto.proveedor guarda el nombre o ID. 
-      // Para hacerlo flexible, intentaremos coincidir ID o Nombre, o si está vacío mostrar todos.
-      // Ajuste: si el campo 'proveedor' en Producto es libre, no será exacto. 
-      // Pero idealmente debería coincidir con el ID del proveedor seleccionado.
-      // Ojo: en la data mock actual de ProductoService, proveedor es un string 'Nombre'.
-      // En ProveedorService los IDs son 'PROV-001'.
-      // Esto es un mismatch de datos mock.
-      // Para efectos prácticos de este demo, filtraremos si producto.proveedor coincide con el NOMBRE del proveedor seleccionado.
       const prov = this.proveedores().find(p => p.id === this.proveedorId());
       if (prov) {
-        return prods.filter(p => p.proveedor === prov.nombre || p.proveedor === prov.id);
+        return prods.filter(p => p.supplierName === prov.nombre || p.supplierId === prov.id);
       }
     }
     
@@ -270,14 +262,14 @@ export class NuevaOrdenComponent {
 
   onTipoChange() {
     this.productosOrden.set([]);
-    this.productoSeleccionado.set('');
-    this.proveedorId.set('');
+    this.productoSeleccionado.set(null);
+    this.proveedorId.set(null);
     this.clienteRef.set('');
   }
 
   onProveedorChange() {
     this.productosOrden.set([]); // Limpiar productos si cambia proveedor
-    this.productoSeleccionado.set('');
+    this.productoSeleccionado.set(null);
   }
 
   getEmptyMessage(): string {
@@ -306,14 +298,14 @@ export class NuevaOrdenComponent {
 
     const item: OrdenProducto = {
       productoId: producto.id,
-      nombreProducto: producto.nombre,
+      nombreProducto: producto.name,
       cantidad: cant,
-      precioUnitario: producto.precio,
-      subtotal: producto.precio * cant
+      precioUnitario: producto.price,
+      subtotal: producto.price * cant
     };
 
     this.productosOrden.update(prev => [...prev, item]);
-    this.productoSeleccionado.set('');
+    this.productoSeleccionado.set(null);
     this.cantidad.set(1);
   }
 
@@ -341,7 +333,7 @@ export class NuevaOrdenComponent {
   }
 
   private getProveedorNombre(): string {
-    const prov = this.proveedores().find(p => p.id === this.proveedorId());
+    const prov = this.proveedores().find(p => p.id == this.proveedorId());
     return prov ? prov.nombre : '';
   }
 

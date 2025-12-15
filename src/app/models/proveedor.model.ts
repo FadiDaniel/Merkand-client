@@ -1,5 +1,5 @@
 export interface Proveedor {
-  id: string;
+  id: number;
   nombre: string;
   contacto: string;
   telefono: string;
@@ -22,5 +22,5 @@ export interface CreateProveedorDto {
 }
 
 export interface UpdateProveedorDto extends Partial<CreateProveedorDto> {
-  id: string;
+  id: number;
 }

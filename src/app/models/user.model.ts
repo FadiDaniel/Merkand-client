@@ -14,3 +14,8 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
 }
+
+export interface AuthResponse {
+  token: string;
+  user?: User; // Optional, in case backend sends user info. If not, we might need to decode token or just use username.
+}

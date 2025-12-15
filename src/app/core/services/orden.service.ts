@@ -17,8 +17,8 @@ export class OrdenService {
     return this.ordenes();
   }
 
-  getById(id: string): Orden | undefined {
-    return this.ordenes().find(o => o.id === id);
+  getById(id: number): Orden | undefined {
+    return this.ordenes().find(o => o.id == id);
   }
 
   create(dto: CreateOrdenDto, creadoPor: string): Orden | null {
@@ -76,8 +76,8 @@ export class OrdenService {
     }
   }
 
-  private generateId(): string {
-    return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  private generateId(): number {
+    return Date.now();
   }
 
   private generateNumeroOrden(): string {
