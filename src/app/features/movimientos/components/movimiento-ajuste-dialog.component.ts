@@ -39,7 +39,7 @@ import { CreateMovimientoDto } from '../../../models/movimiento.model';
           <mat-label>Producto</mat-label>
           <mat-select [(ngModel)]="formData.productoId" name="producto" required>
             @for (prod of productos(); track prod.id) {
-              <mat-option [value]="prod.id">{{ prod.nombre }} (Stock: {{ prod.stock }})</mat-option>
+              <mat-option [value]="prod.id">{{ prod.name }} (Stock: {{ prod.stock }})</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -81,7 +81,7 @@ export class MovimientoAjusteDialogComponent {
 
   formData = {
     tipo: 'ajuste' as const,
-    productoId: '',
+    productoId: 5,
     cantidad: 0,
     motivo: ''
   };

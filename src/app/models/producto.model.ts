@@ -1,27 +1,30 @@
 export interface Producto {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  categoria: string;
-  precio: number;
+  id: number;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
   stock: number;
-  stockMinimo: number;
-  proveedor: string;
-  fechaCreacion: Date;
-  fechaActualizacion: Date;
-  activo: boolean;
+  minimumStock: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+  supplierId: number;
+  supplierName: string;
 }
 
 export interface CreateProductoDto {
-  nombre: string;
-  descripcion: string;
-  categoria: string;
-  precio: number;
+  name: string;
+  description: string;
+  category: string;
+  price: number;
   stock: number;
-  stockMinimo: number;
-  proveedor: string;
+  minimumStock: number;
+  active: boolean;
+  supplierId: number;
+  supplierName: string;
 }
 
 export interface UpdateProductoDto extends Partial<CreateProductoDto> {
-  id: string;
+  id: number;
 }

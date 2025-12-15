@@ -21,7 +21,7 @@ export class ReporteService {
     const categorias = new Map<string, number>();
 
     productos.forEach(p => {
-      const cat = p.categoria || 'Sin Categoría';
+      const cat = p.category || 'Sin Categoría';
       categorias.set(cat, (categorias.get(cat) || 0) + 1);
     });
 
@@ -117,6 +117,6 @@ export class ReporteService {
     );
 
     // Filtrar productos que NO están en ese set y están activos
-    return productos.filter(p => !productosConMov.has(p.id) && p.activo);
+    return productos.filter(p => !productosConMov.has(p.id) && p.active);
   });
 }

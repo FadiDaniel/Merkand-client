@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,6 +13,7 @@ import { CurrencyPipe } from '@angular/common';
 import { ProductoService } from '../../../core/services/producto.service';
 import { Producto } from '../../../models/producto.model';
 import { ProductoFormDialogComponent } from './producto-form-dialog.component';
+import { Router } from '@angular/router'; 
 
 @Component({
   selector: 'app-productos',
@@ -33,7 +34,17 @@ import { ProductoFormDialogComponent } from './producto-form-dialog.component';
   styleUrl: './productos.component.css'
 })
 export class ProductosComponent {
-  displayedColumns: string[] = ['nombre', 'categoria', 'precio', 'stock', 'proveedor', 'estado', 'acciones'];
+  router = inject(Router);
+  displayedColumns: string[] = [
+    'nombre', 
+    'categoria', 
+    'proveedor', 
+    'precio', 
+    'stock', 
+    'estado_stock', 
+    'estado',       
+    'acciones'
+  ];
   searchTerm = signal('');
 
   productos = computed(() => {
@@ -41,14 +52,13 @@ export class ProductosComponent {
     const term = this.searchTerm().toLowerCase();
 
     if (!term) {
-      return productos.filter(p => p.activo);
+      return productos;
     }
 
     return productos.filter(p =>
-      p.activo &&
-      (p.nombre.toLowerCase().includes(term) ||
-       p.categoria.toLowerCase().includes(term) ||
-       p.proveedor.toLowerCase().includes(term))
+      (p.name.toLowerCase().includes(term) ||
+       p.category.toLowerCase().includes(term) ||
+       p.supplierName.toLowerCase().includes(term))
     );
   });
 
@@ -87,7 +97,7 @@ export class ProductosComponent {
   }
 
   deleteProducto(producto: Producto): void {
-    if (confirm(`¿Está seguro de eliminar el producto "${producto.nombre}"?`)) {
+    if (confirm(`¿Está seguro de eliminar el producto "${producto.name}"?`)) {
       this.productoService.delete(producto.id);
       this.snackBar.open('Producto eliminado exitosamente', 'Cerrar', { duration: 3000 });
     }
@@ -95,7 +105,11 @@ export class ProductosComponent {
 
   getStockStatus(producto: Producto): 'normal' | 'bajo' | 'critico' {
     if (producto.stock === 0) return 'critico';
-    if (producto.stock <= producto.stockMinimo) return 'bajo';
+    if (producto.stock <= producto.minimumStock) return 'bajo';
     return 'normal';
+  }
+
+    goToHome(): void {
+    this.router.navigate(['Dashboard']); 
   }
 }

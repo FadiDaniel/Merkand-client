@@ -233,7 +233,7 @@ export class NuevaOrdenComponent {
   productos = this.productoService.productos$;
 
   productosFiltrados = computed(() => {
-    let prods = this.productos().filter(p => p.activo);
+    let prods = this.productos().filter(p => p.active);
     
     // Si es entrada y hay proveedor seleccionado, filtrar por ese proveedor
     if (this.tipoOrden() === 'entrada' && this.proveedorId()) {

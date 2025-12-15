@@ -33,9 +33,9 @@ export class DashboardComponent implements OnInit {
       return ordenDate.getTime() === today.getTime();
     });
 
-    const productosActivos = productos.filter(p => p.activo);
-    const productosStockBajo = productosActivos.filter(p => p.stock <= p.stockMinimo);
-    const valorInventario = productosActivos.reduce((sum, p) => sum + (p.precio * p.stock), 0);
+    const productosActivos = productos.filter(p => p.active);
+    const productosStockBajo = productosActivos.filter(p => p.stock <= p.minimumStock);
+    const valorInventario = productosActivos.reduce((sum, p) => sum + (p.price * p.stock), 0);
 
     return {
       totalProductos: productosActivos.length,

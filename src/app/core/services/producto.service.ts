@@ -1,199 +1,102 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Producto, CreateProductoDto, UpdateProductoDto } from '../../models/producto.model';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
-  // State usando Signals
-  private productos = signal<Producto[]>(this.loadProductos());
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/products';
 
-  // Exponer productos como readonly
+  // State using Signals
+  private productos = signal<Producto[]>([]);
+
+  // Expose products as readonly
   readonly productos$ = this.productos.asReadonly();
 
-  constructor() {}
-
-  /**
-   * Obtiene todos los productos
-   */
-  getAll(): Producto[] {
-    return this.productos();
+  constructor() {
+    this.fetchAll();
   }
 
   /**
-   * Obtiene un producto por ID
+   * Fetches all products from backend
    */
-  getById(id: string): Producto | undefined {
-    return this.productos().find(p => p.id === id);
-  }
-
-  /**
-   * Crea un nuevo producto
-   */
-  create(dto: CreateProductoDto): Producto {
-    const newProducto: Producto = {
-      id: this.generateId(),
-      ...dto,
-      fechaCreacion: new Date(),
-      fechaActualizacion: new Date(),
-      activo: true
-    };
-
-    this.productos.update(productos => [...productos, newProducto]);
-    this.saveProductos();
-    return newProducto;
-  }
-
-  /**
-   * Actualiza un producto existente
-   */
-  update(dto: UpdateProductoDto): Producto | null {
-    const index = this.productos().findIndex(p => p.id === dto.id);
-    
-    if (index === -1) {
-      return null;
-    }
-
-    const updatedProducto: Producto = {
-      ...this.productos()[index],
-      ...dto,
-      fechaActualizacion: new Date()
-    };
-
-    this.productos.update(productos => {
-      const newProductos = [...productos];
-      newProductos[index] = updatedProducto;
-      return newProductos;
+  fetchAll(): void {
+    this.http.get<Producto[]>(this.apiUrl).subscribe({
+      next: (data) => this.productos.set(data),
+      error: (err) => console.error('Error fetching products', err)
     });
-
-    this.saveProductos();
-    return updatedProducto;
   }
 
   /**
-   * Elimina un producto (soft delete)
+   * Get product by ID from state
    */
-  delete(id: string): boolean {
-    const index = this.productos().findIndex(p => p.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-
-    this.productos.update(productos => {
-      const newProductos = [...productos];
-      newProductos[index] = { ...newProductos[index], activo: false };
-      return newProductos;
-    });
-
-    this.saveProductos();
-    return true;
+  getById(id: number): Producto | undefined {
+    return this.productos().find(p => p.id == id);
   }
 
   /**
-   * Actualiza el stock de un producto
+   * Create a new product
    */
-  updateStock(id: string, cantidad: number): boolean {
-    const index = this.productos().findIndex(p => p.id === id);
-    
-    if (index === -1) {
-      return false;
-    }
-
-    this.productos.update(productos => {
-      const newProductos = [...productos];
-      newProductos[index] = {
-        ...newProductos[index],
-        stock: newProductos[index].stock + cantidad,
-        fechaActualizacion: new Date()
-      };
-      return newProductos;
+  create(dto: CreateProductoDto): void {
+    this.http.post<Producto>(this.apiUrl, dto).subscribe({
+      next: (newProducto) => {
+        this.productos.update(productos => [...productos, newProducto]);
+      },
+      error: (err) => console.error('Error creating product', err)
     });
-
-    this.saveProductos();
-    return true;
   }
 
   /**
-   * Obtiene productos con stock bajo
+   * Update an existing product
+   */
+  update(dto: UpdateProductoDto): void {
+    this.http.put<Producto>(`${this.apiUrl}/${dto.id}`, dto).subscribe({
+      next: (updatedProducto) => {
+        this.productos.update(productos => 
+          productos.map(p => p.id === dto.id ? updatedProducto : p)
+        );
+      },
+      error: (err) => console.error('Error updating product', err)
+    });
+  }
+
+  /**
+   * Delete a product
+   */
+  delete(id: number): void {
+     this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => {
+        this.productos.update(productos => productos.filter(p => p.id !== id));
+      },
+      error: (err) => console.error('Error deleting product', err)
+    });
+  }
+
+  /**
+   * Update stock using the update method (full update to ensure PUT safety)
+   */
+  updateStock(id: number, cantidad: number): void {
+     const current = this.getById(id);
+     if (!current) return;
+     
+     // We cast to UpdateProductoDto to satisfy strict typing if necessary, 
+     // but we send the full object to ensure we don't wipe data on PUT.
+     // We update the local stock logic here to create the object.
+     const updatedProducto = {
+       ...current,
+       stock: current.stock + cantidad
+     };
+     
+     this.update(updatedProducto);
+  }
+
+  /**
+   * Get products with low stock
    */
   getProductosStockBajo(): Producto[] {
-    return this.productos().filter(p => p.activo && p.stock <= p.stockMinimo);
-  }
-
-  /**
-   * Genera un ID único
-   */
-  private generateId(): string {
-    return `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  /**
-   * Guarda productos en localStorage
-   */
-  private saveProductos(): void {
-    localStorage.setItem('productos', JSON.stringify(this.productos()));
-  }
-
-  /**
-   * Carga productos desde localStorage
-   */
-  private loadProductos(): Producto[] {
-    const saved = localStorage.getItem('productos');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (error) {
-        console.error('Error loading productos:', error);
-      }
-    }
-    return this.getInitialProductos();
-  }
-
-  /**
-   * Datos iniciales de ejemplo
-   */
-  private getInitialProductos(): Producto[] {
-    return [
-      {
-        id: 'PROD-001',
-        nombre: 'Laptop Dell XPS 15',
-        descripcion: 'Laptop de alto rendimiento',
-        categoria: 'Electrónica',
-        precio: 1500,
-        stock: 10,
-        stockMinimo: 5,
-        proveedor: 'Dell Inc.',
-        fechaCreacion: new Date(),
-        fechaActualizacion: new Date(),
-        activo: true
-      },
-      {
-        id: 'PROD-002',
-        nombre: 'Mouse Logitech MX Master 3',
-        descripcion: 'Mouse ergonómico inalámbrico',
-        categoria: 'Accesorios',
-        precio: 99,
-        stock: 25,
-        stockMinimo: 10,
-        proveedor: 'Logitech',
-        fechaCreacion: new Date(),
-        fechaActualizacion: new Date(),
-        activo: true
-      },
-      {
-        id: 'PROD-003',
-        nombre: 'Teclado Mecánico Keychron K2',
-        descripcion: 'Teclado mecánico compacto',
-        categoria: 'Accesorios',
-        precio: 89,
-        stock: 3,
-        stockMinimo: 8,
-        proveedor: 'Keychron',
-        fechaCreacion: new Date(),
-        fechaActualizacion: new Date(),
-        activo: true
-      }
-    ];
+    return this.productos().filter(p => p.active && p.stock <= p.minimumStock);
   }
 }

@@ -39,10 +39,13 @@
   box-shadow: 0 8px 24px rgba(254, 0, 0, 0.15);
   border-color: var(--merkand-primary);
 }
+.dashboard-card:active {
+    background-color: var(--merkand-primary-dark);
+}
 
 .dashboard-card:hover .card-icon {
   color: var(--merkand-primary);
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 .card-content {
@@ -54,10 +57,10 @@
 }
 
 .card-icon {
-  font-size: 72px;
-  width: 72px;
-  height: 72px;
-  color: var(--merkand-gray-medium);
+  font-size: 82px;
+  width: 82px;
+  height: 82px;
+  color: var(--merkand-primary-dark);
   margin-bottom: 20px;
   transition: all 0.3s ease;
 }

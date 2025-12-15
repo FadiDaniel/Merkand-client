@@ -1,18 +1,19 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User, LoginCredentials, AuthState } from '../../models/user.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // State usando Signals
   private authState = signal<AuthState>({
     user: null,
     isAuthenticated: false
   });
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/auth';
 
-  // Computed signals para acceso público
   readonly user = computed(() => this.authState().user);
   readonly isAuthenticated = computed(() => this.authState().isAuthenticated);
   readonly isAdmin = computed(() => this.authState().user?.isAdmin ?? false);
@@ -21,11 +22,7 @@ export class AuthService {
     this.loadAuthState();
   }
 
-  /**
-   * Intenta autenticar al usuario con las credenciales proporcionadas
-   */
   login(credentials: LoginCredentials): boolean {
-    // Simulación de autenticación (en producción, esto sería una llamada HTTP)
     const validUsers = [
       { username: 'admin', password: 'admin123', isAdmin: true, fullName: 'Administrador' },
       { username: 'usuario', password: 'user123', isAdmin: false, fullName: 'Usuario Regular' }
@@ -54,9 +51,6 @@ export class AuthService {
     return false;
   }
 
-  /**
-   * Cierra la sesión del usuario actual
-   */
   logout(): void {
     this.authState.set({
       user: null,
@@ -67,16 +61,10 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  /**
-   * Guarda el estado de autenticación en localStorage
-   */
   private saveAuthState(): void {
     localStorage.setItem('authState', JSON.stringify(this.authState()));
   }
 
-  /**
-   * Carga el estado de autenticación desde localStorage
-   */
   private loadAuthState(): void {
     const savedState = localStorage.getItem('authState');
     if (savedState) {
@@ -90,9 +78,7 @@ export class AuthService {
     }
   }
 
-  /**
-   * Limpia el estado de autenticación de localStorage
-   */
+
   private clearAuthState(): void {
     localStorage.removeItem('authState');
   }

@@ -29,17 +29,17 @@ interface DialogData {
       <form #productoForm="ngForm">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre</mat-label>
-          <input matInput [(ngModel)]="formData.nombre" name="nombre" required>
+          <input matInput [(ngModel)]="formData.name" name="name" required>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Descripción</mat-label>
-          <textarea matInput [(ngModel)]="formData.descripcion" name="descripcion" rows="3" required></textarea>
+          <textarea matInput [(ngModel)]="formData.description" name="description" rows="3" required></textarea>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Categoría</mat-label>
-          <mat-select [(ngModel)]="formData.categoria" name="categoria" required>
+          <mat-select [(ngModel)]="formData.category" name="category" required>
             <mat-option value="Electrónica">Electrónica</mat-option>
             <mat-option value="Accesorios">Accesorios</mat-option>
             <mat-option value="Componentes">Componentes</mat-option>
@@ -52,7 +52,7 @@ interface DialogData {
         <div class="form-row">
           <mat-form-field appearance="outline">
             <mat-label>Precio</mat-label>
-            <input matInput type="number" [(ngModel)]="formData.precio" name="precio" required min="0" step="0.01">
+            <input matInput type="number" [(ngModel)]="formData.price" name="price" required min="0" step="0.01">
             <span matPrefix>$&nbsp;</span>
           </mat-form-field>
 
@@ -63,13 +63,13 @@ interface DialogData {
 
           <mat-form-field appearance="outline">
             <mat-label>Stock Mínimo</mat-label>
-            <input matInput type="number" [(ngModel)]="formData.stockMinimo" name="stockMinimo" required min="0">
+            <input matInput type="number" [(ngModel)]="formData.minimumStock" name="minimumStock" required min="0">
           </mat-form-field>
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Proveedor</mat-label>
-          <input matInput [(ngModel)]="formData.proveedor" name="proveedor" required>
+          <input matInput [(ngModel)]="formData.supplierName" name="supplierName" required>
         </mat-form-field>
       </form>
     </mat-dialog-content>
@@ -118,13 +118,15 @@ export class ProductoFormDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: DialogData
   ) {
     this.formData = {
-      nombre: this.data.producto?.nombre || '',
-      descripcion: this.data.producto?.descripcion || '',
-      categoria: this.data.producto?.categoria || '',
-      precio: this.data.producto?.precio || 0,
+      name: this.data.producto?.name || '',
+      description: this.data.producto?.description || '',
+      category: this.data.producto?.category || '',
+      price: this.data.producto?.price || 0,
       stock: this.data.producto?.stock || 0,
-      stockMinimo: this.data.producto?.stockMinimo || 0,
-      proveedor: this.data.producto?.proveedor || ''
+      minimumStock: this.data.producto?.minimumStock || 0,
+      active: this.data.producto?.active ?? true,
+      supplierId: this.data.producto?.supplierId || 0,
+      supplierName: this.data.producto?.supplierName || ''
     };
   }
 

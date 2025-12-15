@@ -21,7 +21,7 @@ export class MovimientoService {
     const nuevoMovimiento: Movimiento = {
       id: `MOV-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       ...dto,
-      nombreProducto: producto?.nombre || 'Producto desconocido',
+      nombreProducto: producto?.name || 'Producto desconocido',
       fecha: new Date(),
       usuario
     };

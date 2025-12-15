@@ -14,7 +14,7 @@ export interface Orden {
 }
 
 export interface OrdenProducto {
-  productoId: string;
+  productoId: number;
   nombreProducto: string;
   cantidad: number;
   precioUnitario: number;

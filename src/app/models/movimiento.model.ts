@@ -1,7 +1,7 @@
 export interface Movimiento {
   id: string;
   tipo: 'entrada' | 'salida' | 'ajuste' | 'inventario-inicial';
-  productoId: string;
+  productoId: number;
   nombreProducto?: string; // Opcional si no lo tenemos a mano siempre, o el servicio lo llena
   cantidad: number;
   fecha: Date;
@@ -12,7 +12,7 @@ export interface Movimiento {
 
 export interface CreateMovimientoDto {
   tipo: 'entrada' | 'salida' | 'ajuste' | 'inventario-inicial';
-  productoId: string;
+  productoId: number;
   cantidad: number;
   referencia?: string;
   motivo: string;
