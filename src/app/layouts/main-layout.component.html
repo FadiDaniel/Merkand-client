@@ -1,0 +1,72 @@
+<div class="main-layout">
+    <mat-toolbar color="primary" class="header">
+        <h1 class="app-name">Merkand</h1>
+
+        <span class="spacer"></span>
+
+        <button mat-icon-button (click)="drawer.toggle()" class="menu-button">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </mat-toolbar>
+
+    <mat-drawer-container class="drawer-container">
+        <mat-drawer #drawer mode="over" position="end" class="side-menu">
+            <div class="menu-header">
+                <h2>Menú</h2>
+                <button mat-icon-button (click)="drawer.close()">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+
+            <mat-nav-list class="main-menu-items">
+                <mat-list-item (click)="navigateToProfile(); drawer.close()">
+                    <mat-icon matListItemIcon>person</mat-icon>
+                    <span matListItemTitle>Perfil del usuario</span>
+                </mat-list-item>
+
+                @if (isAdmin()) {
+                <mat-list-item [routerLink]="['/registro']" (click)="drawer.close()">
+                    <mat-icon matListItemIcon>person_add</mat-icon>
+                    <span matListItemTitle>Registrar nuevo usuario</span>
+                </mat-list-item>
+                }
+
+                <mat-list-item (click)="navigateTo('/contacto'); drawer.close()">
+                    <mat-icon matListItemIcon>contact_mail</mat-icon>
+                    <span matListItemTitle>Contacta con nosotros</span>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item (click)="logout(); drawer.close()" class="logout-item">
+                    <mat-icon matListItemIcon>logout</mat-icon>
+                    <span matListItemTitle>Cerrar sesión</span>
+                </mat-list-item>
+            </mat-nav-list>
+
+            <div class="secondary-menu-items">
+                <mat-list-item (click)="navigateTo('/legal'); drawer.close()" class="secondary-item">
+                    <mat-icon matListItemIcon>gavel</mat-icon>
+                    <span matListItemTitle>Información legal</span>
+                </mat-list-item>
+
+                <mat-list-item (click)="navigateTo('/ayuda'); drawer.close()" class="secondary-item">
+                    <mat-icon matListItemIcon>help</mat-icon>
+                    <span matListItemTitle>Ayuda</span>
+                </mat-list-item>
+            </div>
+
+            <div class="user-info">
+                <mat-icon>account_circle</mat-icon>
+                <div class="user-details">
+                    <p class="user-name">{{ user()?.fullName || user()?.username }}</p>
+                    <p class="user-role">{{ isAdmin() ? 'Administrador' : 'Usuario' }}</p>
+                </div>
+            </div>
+        </mat-drawer>
+
+        <mat-drawer-content class="main-content">
+            <router-outlet></router-outlet>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

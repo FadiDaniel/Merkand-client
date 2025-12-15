@@ -1,59 +1,252 @@
-# MerkandClient
+# Sistema de Control de Inventario - Angular
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+Sistema completo de gestión de inventario desarrollado con **Angular 21**, **Angular Material** y arquitectura moderna usando **Signals** y **Standalone Components**.
 
-## Development server
+## 🚀 Características
 
-To start a local development server, run:
+### Funcionalidades Principales
+
+- ✅ **Autenticación y Autorización** con roles (Admin/Usuario)
+- ✅ **Dashboard** con estadísticas en tiempo real
+- ✅ **Gestión de Productos** (CRUD completo)
+- ✅ **Gestión de Órdenes** (Entrada/Salida)
+- ✅ **Control de Movimientos** de inventario
+- ✅ **Gestión de Proveedores** (solo Admin)
+- ✅ **Reportes** de inventario y ventas
+- ✅ **Perfil de Usuario**
+- ✅ **Registro de Usuarios** (solo Admin)
+
+### Tecnologías y Arquitectura
+
+#### Stack Tecnológico
+
+- **Angular 21** - Framework principal
+- **Angular Material** - Componentes UI
+- **TypeScript 5.9** - Lenguaje de programación
+- **RxJS 7.8** - Programación reactiva
+- **Signals** - Manejo de estado reactivo
+- **PNPM** - Gestor de paquetes
+
+#### Arquitectura
+
+```
+src/app/
+├── core/                    # Servicios singleton y guards
+│   ├── guards/             # Guards de autenticación
+│   ├── services/           # Servicios core (Auth, Producto, Orden)
+│   └── interceptors/       # HTTP Interceptors (futuro)
+├── shared/                  # Componentes compartidos
+│   ├── components/         # Componentes reutilizables
+│   └── pipes/              # Pipes personalizados
+├── features/                # Módulos de funcionalidades
+│   ├── auth/               # Login y registro
+│   ├── dashboard/          # Dashboard principal
+│   ├── productos/          # Gestión de productos
+│   ├── ordenes/            # Gestión de órdenes
+│   ├── movimientos/        # Historial de movimientos
+│   ├── proveedores/        # Gestión de proveedores
+│   ├── reportes/           # Reportes y estadísticas
+│   └── perfil/             # Perfil de usuario
+├── models/                  # Interfaces y tipos
+└── layouts/                 # Layouts principales
+```
+
+## 📦 Instalación
+
+### Prerrequisitos
+
+- Node.js 24.x o superior
+- PNPM 10.x
+- Angular CLI 21.x
+
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
 
 ```bash
+cd Merkand-client
+```
+
+2. **Instalar dependencias**
+
+```bash
+pnpm install
+```
+
+3. **Iniciar el servidor de desarrollo**
+
+```bash
+pnpm start
+# o
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+4. **Abrir en el navegador**
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔐 Credenciales de Prueba
 
-```bash
-ng generate --help
+### Usuario Administrador
+
+- **Usuario:** `admin`
+- **Contraseña:** `admin123`
+- **Permisos:** Acceso completo a todas las funcionalidades
+
+### Usuario Regular
+
+- **Usuario:** `usuario`
+- **Contraseña:** `user123`
+- **Permisos:** Acceso limitado (sin gestión de proveedores ni registro de usuarios)
+
+## 🏗️ Arquitectura y Patrones
+
+### Standalone Components
+
+Todos los componentes son standalone, eliminando la necesidad de NgModules:
+
+```typescript
+@Component({
+  selector: 'app-productos',
+  imports: [MatCardModule, MatTableModule, ...],
+  templateUrl: './productos.component.html'
+})
+export class ProductosComponent { }
 ```
 
-## Building
+### Signals para Estado Reactivo
 
-To build the project run:
+Uso de Signals de Angular para manejo de estado:
 
-```bash
-ng build
+```typescript
+private productos = signal<Producto[]>([]);
+readonly productos$ = this.productos.asReadonly();
+
+// Computed signals
+readonly productosStockBajo = computed(() =>
+  this.productos().filter(p => p.stock <= p.stockMinimo)
+);
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+### Control Flow Syntax
 
-## Running unit tests
+Uso de la nueva sintaxis de control de flujo de Angular:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```html
+@if (productos().length > 0) {
+<table mat-table [dataSource]="productos()">
+  @for (producto of productos(); track producto.id) {
+  <tr>
+    {{ producto.nombre }}
+  </tr>
+  }
+</table>
+} @else {
+<p>No hay productos</p>
+}
 ```
 
-## Running end-to-end tests
+### Dependency Injection con inject()
 
-For end-to-end (e2e) testing, run:
+Uso de la función `inject()` en lugar de constructor injection:
 
-```bash
-ng e2e
+```typescript
+export class ProductosComponent {
+  private productoService = inject(ProductoService);
+  private router = inject(Router);
+}
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Guards Funcionales
 
-## Additional Resources
+Guards implementados como funciones en lugar de clases:
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```typescript
+export const authGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  return authService.isAuthenticated();
+};
+```
+
+## 📊 Servicios Principales
+
+### AuthService
+
+- Autenticación de usuarios
+- Manejo de sesión con localStorage
+- Computed signals para estado de autenticación
+
+### ProductoService
+
+- CRUD completo de productos
+- Validación de stock
+- Alertas de stock bajo
+- Persistencia en localStorage
+
+### OrdenService
+
+- Creación de órdenes de entrada/salida
+- Validación de stock para salidas
+- Actualización automática de inventario
+- Generación de números de orden
+
+## 🎨 Diseño y UI
+
+### Tema Personalizado
+
+El proyecto usa un tema personalizado de Angular Material con paleta rose/red:
+
+```scss
+@include mat.theme(
+  (
+    color: (
+      primary: mat.$rose-palette,
+      tertiary: mat.$red-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  )
+);
+```
+
+### Componentes Material Utilizados
+
+- Cards, Tables, Forms
+- Dialogs, Menus, Toolbars
+- Buttons, Icons, Chips
+- Sidenav, Tabs
+- Snackbars para notificaciones
+
+
+### Lazy Loading
+
+Los componentes secundarios usan lazy loading para optimizar la carga inicial:
+
+```typescript
+{
+  path: 'reportes',
+  loadComponent: () => import('./features/reportes/...')
+}
+```
+
+
+## 🚀 Comandos Disponibles
+
+```bash
+# Desarrollo
+pnpm start          # Inicia servidor de desarrollo
+pnpm build          # Build de producción
+pnpm watch          # Build en modo watch
+
+# Testing (configurar)
+pnpm test           # Ejecuta tests unitarios
+
+# Linting
+ng lint             # Ejecuta linter
+```
+
+---
+
+**Nota:** Este proyecto usa datos simulados almacenados en localStorage. Para producción, se debe integrar con un backend real.

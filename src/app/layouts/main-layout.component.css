@@ -1,0 +1,155 @@
+.main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--merkand-primary) !important;
+}
+
+.app-name {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.menu-button {
+  color: white;
+}
+
+.drawer-container {
+  flex: 1;
+  background-color: #f8f9fa;
+}
+
+.side-menu {
+  width: 320px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--merkand-gray-dark);
+  color: white;
+}
+
+.menu-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.menu-header button {
+  color: white;
+}
+
+.main-menu-items {
+  flex: 1;
+  padding: 16px 0;
+}
+
+.main-menu-items mat-list-item {
+  height: 64px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.main-menu-items mat-list-item:hover {
+  background-color: #f8f9fa;
+}
+
+.main-menu-items mat-icon {
+  color: var(--merkand-gray-medium);
+  margin-right: 16px;
+}
+
+.logout-item {
+  color: var(--merkand-primary);
+  font-weight: 500;
+}
+
+.logout-item mat-icon {
+  color: var(--merkand-primary);
+}
+
+mat-divider {
+  margin: 16px 0;
+}
+
+.secondary-menu-items {
+  padding: 8px 0;
+  background-color: #f8f9fa;
+  border-top: 1px solid var(--merkand-gray-light);
+}
+
+.secondary-item {
+  height: 56px;
+  opacity: 0.7;
+  font-size: 14px;
+}
+
+.secondary-item:hover {
+  opacity: 1;
+  background-color: #e9ecef;
+}
+
+.secondary-item mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: var(--merkand-gray-dark);
+  color: white;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: white;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-role {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.main-content {
+  min-height: calc(100vh - 64px);
+  padding: 0;
+}

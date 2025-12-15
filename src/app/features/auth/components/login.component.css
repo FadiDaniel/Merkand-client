@@ -1,0 +1,124 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Fondo gris muy claro */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  max-width: 450px;
+  width: 100%;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  /* Sombra suave pero visible */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.login-card mat-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.logo-section {
+  text-align: center;
+  width: 100%;
+}
+
+.app-name {
+  margin: 0;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--merkand-primary);
+  letter-spacing: 1px;
+}
+
+.app-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 14px;
+  color: var(--merkand-gray-medium);
+  font-weight: 400;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field {
+  margin-bottom: 16px;
+}
+
+.forgot-password-section {
+  text-align: right;
+  margin-bottom: 20px;
+  margin-top: -8px;
+}
+
+.forgot-password-link {
+  color: var(--merkand-primary);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.forgot-password-link:hover {
+  color: var(--merkand-primary-dark);
+  text-decoration: underline;
+}
+
+/* Estilos personalizados del botón */
+.login-button {
+  margin-top: 8px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  /* Estado normal: Blanco con texto Rojo */
+  background-color: white !important;
+  color: var(--merkand-primary) !important;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+/* Estado Hover y Active: Rojo con texto Blanco */
+.login-button:not(:disabled):hover,
+.login-button:not(:disabled):active {
+  background-color: var(--merkand-primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 8px rgba(254, 0, 0, 0.3);
+}
+
+/* Estado Disabled */
+.login-button:disabled {
+  background-color: #f5f5f5 !important;
+  color: #bdbdbd !important;
+  box-shadow: none;
+  border: none;
+}
+
+.demo-credentials {
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  text-align: center;
+  border-left: 4px solid var(--merkand-primary);
+  border: 1px solid #eee; 
+  border-left-width: 4px;
+}
+
+.demo-credentials p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.demo-credentials strong {
+  color: var(--merkand-primary);
+}

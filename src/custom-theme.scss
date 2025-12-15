@@ -1,16 +1,65 @@
 
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+// Custom theme for Merkand - Sistema de Control de Inventario
 @use '@angular/material' as mat;
+
+// Define custom color palette based on #fe0000 (red)
+$merkand-red: (
+  50: #fee,
+  100: #fcc,
+  200: #faa,
+  300: #f88,
+  400: #fe4444,
+  500: #fe0000,
+  600: #dc0000,
+  700: #ba0000,
+  800: #980000,
+  900: #760000,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #000,
+    400: #fff,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  )
+);
+
+// Neutral gray-blue palette
+$merkand-gray: (
+  50: #f8f9fa,
+  100: #e9ecef,
+  200: #dee2e6,
+  300: #ced4da,
+  400: #adb5bd,
+  500: #6c757d,
+  600: #495057,
+  700: #343a40,
+  800: #212529,
+  900: #1a1d20,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #000,
+    400: #000,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff,
+  )
+);
+
 
 html {
   @include mat.theme((
     color: (
-      primary: mat.$rose-palette,
-      tertiary: mat.$red-palette,
+      primary: $merkand-red,
+      tertiary: $merkand-gray,
     ),
     typography: Roboto,
     density: 0,
@@ -18,18 +67,20 @@ html {
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
+  background-color: #f8f9fa;
+  color: #212529;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
   margin: 0;
+}
+
+// Custom CSS variables for Merkand
+:root {
+  --merkand-primary: #fe0000;
+  --merkand-primary-dark: #dc0000;
+  --merkand-primary-light: #fe4444;
+  --merkand-gray-dark: #343a40;
+  --merkand-gray-medium: #6c757d;
+  --merkand-gray-light: #e9ecef;
+  --merkand-white: #ffffff;
 }
