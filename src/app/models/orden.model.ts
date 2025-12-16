@@ -1,16 +1,16 @@
 export interface Orden {
   id: number;
   numeroOrden: string;
-  tipo: 'entrada' | 'salida';
   fecha: Date;
   proveedor?: string;
-  cliente?: string;
   productos: OrdenProducto[];
   total: number;
-  estado: 'pendiente' | 'procesada' | 'cancelada';
+  estado: 'PENDING' | 'RECEIVED' | 'CANCELLED';
   observaciones?: string;
   creadoPor: string;
   fechaCreacion: Date;
+  supplierId: number;
+  supplierName: string;
 }
 
 export interface OrdenProducto {
@@ -22,9 +22,7 @@ export interface OrdenProducto {
 }
 
 export interface CreateOrdenDto {
-  tipo: 'entrada' | 'salida';
   proveedor?: string;
-  cliente?: string;
   productos: OrdenProducto[];
   observaciones?: string;
 }

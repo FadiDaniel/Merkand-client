@@ -1,7 +1,10 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { Orden, CreateOrdenDto } from '../../models/orden.model';
+import { Orden, CreateOrdenDto, OrdenProducto } from '../../models/orden.model';
 import { ProductoService } from './producto.service';
-import { MovimientoService } from './movimiento.service';
+import { MovimientoService } from './movimiento.service'; 
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,95 +12,82 @@ import { MovimientoService } from './movimiento.service';
 export class OrdenService {
   private productoService = inject(ProductoService);
   private movimientoService = inject(MovimientoService);
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:8080/api/orders'; 
 
-  private ordenes = signal<Orden[]>(this.loadOrdenes());
+  private ordenes = signal<Orden[]>([]);
   readonly ordenes$ = this.ordenes.asReadonly();
 
-  getAll(): Orden[] {
-    return this.ordenes();
+  constructor() {
+    this.fetchAll();
+  }
+
+  fetchAll(): void {
+    this.http.get<Orden[]>(this.apiUrl).subscribe({
+      next: (data) => this.ordenes.set(data),
+      error: (err) => console.error('Error fetching orders', err)
+    });
   }
 
   getById(id: number): Orden | undefined {
-    return this.ordenes().find(o => o.id == id);
+    return this.ordenes().find(o => o.id === id);
   }
 
-  create(dto: CreateOrdenDto, creadoPor: string): Orden | null {
-    // Validar stock para órdenes de salida
-    if (dto.tipo === 'salida') {
-      for (const item of dto.productos) {
-        const producto = this.productoService.getById(item.productoId);
-        if (!producto || producto.stock < item.cantidad) {
-          return null;
-        }
-      }
+
+  create(dto: CreateOrdenDto): Observable<Orden> {
+    return this.http.post<Orden>(this.apiUrl, dto).pipe(
+      tap({
+        next: (newOrden) => {
+          this.ordenes.update(ordenes => [...ordenes, newOrden]);
+        },
+        error: (err) => console.error('Error creating order', err)
+      })
+    );
+  }
+
+  receiveOrder(ordenId: number): void {
+    const orden = this.getById(ordenId);
+    if (!orden || orden.estado !== 'PENDING') {
+      console.warn('Cannot receive order: Order not found or not in PENDING status.');
+      return;
     }
 
-    const total = dto.productos.reduce((sum, p) => sum + p.subtotal, 0);
+    this.http.put<Orden>(`${this.apiUrl}/${ordenId}/receive`, {}).subscribe({
+      next: (updatedOrden) => {
+        this.ordenes.update(ordenes => 
+          ordenes.map(o => o.id === ordenId ? updatedOrden : o)
+        );
 
-    const newOrden: Orden = {
-      id: this.generateId(),
-      numeroOrden: this.generateNumeroOrden(),
-      ...dto,
-      total,
-      estado: 'procesada', // Auto-procesar para simplificar demo y generar movs inmediatamente
-      creadoPor,
-      fecha: new Date(),
-      fechaCreacion: new Date()
-    };
+        updatedOrden.productos.forEach(item => {
+          this.productoService.updateStock(item.productoId, item.cantidad);
+        });
 
-    this.ordenes.update(ordenes => [...ordenes, newOrden]);
-    this.saveOrdenes();
-
-    // Actualizar stock y registrar movimientos
-    this.updateStockAndRegisterMovements(newOrden, creadoPor);
-
-    return newOrden;
+        console.log(`Order ${ordenId} received and stock updated.`);
+      },
+      error: (err) => console.error('Error receiving order', err)
+    });
   }
+  
 
-  // Ya no usamos updateEstado manual si procesamos directo, o podríamos dejarlo para cancelar
-  // Por ahora lo simplifico a CREAR -> PROCESADA instantáneamente para demo
-
-  private updateStockAndRegisterMovements(orden: Orden, usuario: string): void {
-    const isEntrada = orden.tipo === 'entrada';
-    const multiplier = isEntrada ? 1 : -1;
+  cancelOrder(ordenId: number): void {
+    const orden = this.getById(ordenId);
+    if (!orden || orden.estado !== 'PENDING') {
+      console.warn('Cannot cancel order: Order not found or not in PENDING status.');
+      return;
+    }
     
-    for (const item of orden.productos) {
-      // 1. Actualizar Stock
-      this.productoService.updateStock(item.productoId, item.cantidad * multiplier);
-
-      // 2. Registrar Movimiento
-      this.movimientoService.registrarMovimiento({
-        productoId: item.productoId,
-        cantidad: item.cantidad,
-        tipo: isEntrada ? 'entrada' : 'salida',
-        referencia: orden.numeroOrden,
-        motivo: isEntrada ? `Orden de Compra ${orden.numeroOrden}` : `Venta / Salida ${orden.numeroOrden}`
-      }, usuario);
-    }
+    this.http.put<Orden>(`${this.apiUrl}/${ordenId}/cancel`, {}).subscribe({
+      next: (updatedOrden) => {
+        this.ordenes.update(ordenes => 
+          ordenes.map(o => o.id === ordenId ? updatedOrden : o)
+        );
+        console.log(`Order ${ordenId} cancelled.`);
+      },
+      error: (err) => console.error('Error cancelling order', err)
+    });
   }
 
-  private generateId(): number {
-    return Date.now();
-  }
-
-  private generateNumeroOrden(): string {
-    const count = this.ordenes().length + 1;
-    return `ORD-${new Date().getFullYear()}-${String(count).padStart(5, '0')}`;
-  }
-
-  private saveOrdenes(): void {
-    localStorage.setItem('ordenes', JSON.stringify(this.ordenes()));
-  }
-
-  private loadOrdenes(): Orden[] {
-    const saved = localStorage.getItem('ordenes');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (error) {
-        console.error('Error loading ordenes:', error);
-      }
-    }
-    return [];
+  private calculateTotal(productos: OrdenProducto[]): number {
+    return productos.reduce((sum, item) => sum + item.subtotal, 0);
   }
 }

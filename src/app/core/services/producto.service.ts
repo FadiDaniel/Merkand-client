@@ -10,19 +10,13 @@ export class ProductoService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/products';
 
-  // State using Signals
   private productos = signal<Producto[]>([]);
-
-  // Expose products as readonly
   readonly productos$ = this.productos.asReadonly();
 
   constructor() {
     this.fetchAll();
   }
 
-  /**
-   * Fetches all products from backend
-   */
   fetchAll(): void {
     this.http.get<Producto[]>(this.apiUrl).subscribe({
       next: (data) => this.productos.set(data),
@@ -30,16 +24,11 @@ export class ProductoService {
     });
   }
 
-  /**
-   * Get product by ID from state
-   */
   getById(id: number): Producto | undefined {
     return this.productos().find(p => p.id == id);
   }
 
-  /**
-   * Create a new product
-   */
+
   create(dto: CreateProductoDto): void {
     this.http.post<Producto>(this.apiUrl, dto).subscribe({
       next: (newProducto) => {
@@ -49,9 +38,7 @@ export class ProductoService {
     });
   }
 
-  /**
-   * Update an existing product
-   */
+
   update(dto: UpdateProductoDto): void {
     this.http.put<Producto>(`${this.apiUrl}/${dto.id}`, dto).subscribe({
       next: (updatedProducto) => {
@@ -63,9 +50,7 @@ export class ProductoService {
     });
   }
 
-  /**
-   * Delete a product
-   */
+
   delete(id: number): void {
      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
       next: () => {
@@ -75,9 +60,7 @@ export class ProductoService {
     });
   }
 
-  /**
-   * Update stock using the update method (full update to ensure PUT safety)
-   */
+
   updateStock(id: number, cantidad: number): void {
      const current = this.getById(id);
      if (!current) return;
@@ -93,9 +76,6 @@ export class ProductoService {
      this.update(updatedProducto);
   }
 
-  /**
-   * Get products with low stock
-   */
   getProductosStockBajo(): Producto[] {
     return this.productos().filter(p => p.active && p.stock <= p.minimumStock);
   }

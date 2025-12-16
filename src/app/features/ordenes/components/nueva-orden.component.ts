@@ -314,22 +314,23 @@ export class NuevaOrdenComponent {
   }
 
   onSubmit(): void {
-    const orden = this.ordenService.create(
-      {
-        tipo: this.tipoOrden(),
-        proveedor: this.tipoOrden() === 'entrada' ? this.getProveedorNombre() : undefined,
-        cliente: this.tipoOrden() === 'salida' ? this.clienteRef() : undefined,
-        productos: this.productosOrden()
-      },
-      this.authService.user()?.username || 'Sistema'
-    );
+    console.log(this.productosOrden());
+    // const orden = this.ordenService.create(
+    //   {
+    //     tipo: this.tipoOrden(),
+    //     proveedor: this.tipoOrden() === 'entrada' ? this.getProveedorNombre() : undefined,
+    //     cliente: this.tipoOrden() === 'salida' ? this.clienteRef() : undefined,
+    //     productos: this.productosOrden()
+    //   },
+    //   this.authService.user() || 'Sistema'
+    // );
 
-    if (orden) {
-      this.snackBar.open('Orden creada exitosamente', 'Cerrar', { duration: 3000 });
-      this.router.navigate(['/ordenes']);
-    } else {
-      this.snackBar.open('Error al crear la orden', 'Cerrar', { duration: 3000 });
-    }
+    // if (orden) {
+    //   this.snackBar.open('Orden creada exitosamente', 'Cerrar', { duration: 3000 });
+    //   this.router.navigate(['/ordenes']);
+    // } else {
+    //   this.snackBar.open('Error al crear la orden', 'Cerrar', { duration: 3000 });
+    // }
   }
 
   private getProveedorNombre(): string {

@@ -8,6 +8,7 @@ import { OrdenService } from '../../../core/services/orden.service';
 
 @Component({
   selector: 'app-ordenes',
+  standalone: true, 
   imports: [
     MatCardModule,
     MatButtonModule,
@@ -19,7 +20,11 @@ import { OrdenService } from '../../../core/services/orden.service';
   template: `
     <div class="ordenes-container">
       <div class="header">
-        <h1 class="page-title">Órdenes</h1>
+        <h1 class="page-title">Órdenes de Compra</h1>
+        <button mat-flat-button color="primary">
+          <mat-icon>add</mat-icon>
+          Nueva Orden
+        </button>
       </div>
 
       <mat-card>
@@ -30,13 +35,12 @@ import { OrdenService } from '../../../core/services/orden.service';
                 <th mat-header-cell *matHeaderCellDef>Número</th>
                 <td mat-cell *matCellDef="let orden">{{ orden.numeroOrden }}</td>
               </ng-container>
-
-              <ng-container matColumnDef="tipo">
-                <th mat-header-cell *matHeaderCellDef>Tipo</th>
-                <td mat-cell *matCellDef="let orden">
-                  <span [class]="'tipo-badge ' + orden.tipo">{{ orden.tipo }}</span>
-                </td>
+              
+              <ng-container matColumnDef="proveedor">
+                <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+                <td mat-cell *matCellDef="let orden">{{ orden.supplierName || orden.proveedor }}</td>
               </ng-container>
+
 
               <ng-container matColumnDef="fecha">
                 <th mat-header-cell *matHeaderCellDef>Fecha</th>
@@ -51,9 +55,22 @@ import { OrdenService } from '../../../core/services/orden.service';
               <ng-container matColumnDef="estado">
                 <th mat-header-cell *matHeaderCellDef>Estado</th>
                 <td mat-cell *matCellDef="let orden">
-                  <span [class]="'estado-badge ' + orden.estado">{{ orden.estado }}</span>
+                  <span [class]="'estado-badge ' + orden.estado?.toLowerCase()">{{ orden.estado }}</span>
                 </td>
               </ng-container>
+              
+              <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let orden">
+                  <button mat-icon-button color="primary" [disabled]="orden.estado !== 'PENDING'" (click)="receiveOrder(orden.id)" title="Recibir Orden">
+                     <mat-icon>local_shipping</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" [disabled]="orden.estado !== 'PENDING'" (click)="cancelOrder(orden.id)" title="Cancelar Orden">
+                     <mat-icon>close</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -98,37 +115,27 @@ import { OrdenService } from '../../../core/services/orden.service';
       width: 100%;
     }
 
-    .tipo-badge, .estado-badge {
+    .estado-badge {
       padding: 4px 12px;
       border-radius: 12px;
       font-size: 12px;
       font-weight: 500;
-      text-transform: capitalize;
+      text-transform: uppercase;
     }
 
-    .tipo-badge.entrada {
-      background-color: #e3f2fd;
-      color: #1976d2;
-    }
-
-    .tipo-badge.salida {
-      background-color: #fff3e0;
-      color: #f57c00;
-    }
-
-    .estado-badge.pendiente {
+    .estado-badge.pending {
       background-color: #fff9c4;
-      color: #f57f17;
+      color: #f57f17; /* Amarillo/Ámbar */
     }
 
-    .estado-badge.procesada {
+    .estado-badge.received {
       background-color: #c8e6c9;
-      color: #388e3c;
+      color: #388e3c; /* Verde */
     }
 
-    .estado-badge.cancelada {
+    .estado-badge.cancelled {
       background-color: #ffcdd2;
-      color: #d32f2f;
+      color: #d32f2f; /* Rojo */
     }
 
     .no-data {
@@ -151,6 +158,15 @@ import { OrdenService } from '../../../core/services/orden.service';
 export class OrdenesComponent {
   private ordenService = inject(OrdenService);
   
-  displayedColumns: string[] = ['numeroOrden', 'tipo', 'fecha', 'total', 'estado'];
+  displayedColumns: string[] = ['numeroOrden', 'proveedor', 'fecha', 'total', 'estado', 'acciones'];
+  
   readonly ordenes = this.ordenService.ordenes$;
+  
+  receiveOrder(id: number): void {
+    this.ordenService.receiveOrder(id);
+  }
+  
+  cancelOrder(id: number): void {
+    this.ordenService.cancelOrder(id);
+  }
 }
