@@ -65,9 +65,6 @@ export class ProductoService {
      const current = this.getById(id);
      if (!current) return;
      
-     // We cast to UpdateProductoDto to satisfy strict typing if necessary, 
-     // but we send the full object to ensure we don't wipe data on PUT.
-     // We update the local stock logic here to create the object.
      const updatedProducto = {
        ...current,
        stock: current.stock + cantidad

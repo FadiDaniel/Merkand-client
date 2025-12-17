@@ -69,13 +69,11 @@ mat-form-field {
   text-decoration: underline;
 }
 
-/* Estilos personalizados del botón */
 .login-button {
   margin-top: 8px;
   height: 48px;
   font-size: 16px;
   font-weight: 600;
-  /* Estado normal: Blanco con texto Rojo */
   background-color: white !important;
   color: var(--merkand-primary) !important;
   border: 1px solid var(--merkand-primary);
@@ -83,7 +81,6 @@ mat-form-field {
   transition: all 0.3s ease;
 }
 
-/* Estado Hover y Active: Rojo con texto Blanco */
 .login-button:not(:disabled):hover,
 .login-button:not(:disabled):active {
   background-color: var(--merkand-primary) !important;
@@ -91,7 +88,6 @@ mat-form-field {
   box-shadow: 0 4px 8px rgba(254, 0, 0, 0.3);
 }
 
-/* Estado Disabled */
 .login-button:disabled {
   background-color: #f5f5f5 !important;
   color: #bdbdbd !important;

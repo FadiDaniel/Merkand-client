@@ -42,7 +42,6 @@ export class ReporteService {
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const hoy = new Date();
     
-    // Inicializar últimos 6 meses
     const dataEntradas = new Array(6).fill(0);
     const dataSalidas = new Array(6).fill(0);
     const labels = [];
@@ -57,15 +56,12 @@ export class ReporteService {
       const diffMonths = (hoy.getFullYear() - fecha.getFullYear()) * 12 + (hoy.getMonth() - fecha.getMonth());
       
       if (diffMonths >= 0 && diffMonths < 6) {
-        // Índice inverso (0 es hace 6 meses, 5 es hoy) -> WRONG logic above for array filling
-        // Si diffMonths = 0 (este mes) -> index 5
-        // Si diffMonths = 5 (hace 5 meses) -> index 0
         const index = 5 - diffMonths;
         
         if (m.tipo === 'entrada') {
           dataEntradas[index] += m.cantidad;
         } else if (m.tipo === 'salida') {
-          dataSalidas[index] += Math.abs(m.cantidad); // Cantidad en movimiento puede ser negativa o positiva segun logica, normalizamos
+          dataSalidas[index] += Math.abs(m.cantidad); 
         }
       }
     });
@@ -116,7 +112,6 @@ export class ReporteService {
         .map(m => m.productoId)
     );
 
-    // Filtrar productos que NO están en ese set y están activos
     return productos.filter(p => !productosConMov.has(p.id) && p.active);
   });
 }

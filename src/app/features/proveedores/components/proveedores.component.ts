@@ -131,17 +131,7 @@ export class ProveedoresComponent {
   displayedColumns = ['nombre', 'contacto', 'ubicacion', 'acciones'];
 
   crearProveedor() {
-    const dialogRef = this.dialog.open(ProveedorFormDialogComponent, {
-      width: '600px',
-      data: {}
-    });
 
-    dialogRef.afterClosed().subscribe((result: CreateProveedorDto) => {
-      if (result) {
-        this.proveedorService.create(result);
-        this.snackBar.open('Proveedor creado exitosamente', 'Cerrar', { duration: 3000 });
-      }
-    });
   }
 
   editarProveedor(proveedor: Proveedor) {
@@ -151,17 +141,11 @@ export class ProveedoresComponent {
     });
 
     dialogRef.afterClosed().subscribe((result: CreateProveedorDto) => {
-      if (result) {
-        this.proveedorService.update({ id: proveedor.id, ...result });
-        this.snackBar.open('Proveedor actualizado exitosamente', 'Cerrar', { duration: 3000 });
-      }
+
     });
   }
 
   eliminarProveedor(proveedor: Proveedor) {
-    if (confirm(`¿Estás seguro de eliminar a ${proveedor.nombre}?`)) {
-      this.proveedorService.delete(proveedor.id);
-      this.snackBar.open('Proveedor eliminado', 'Cerrar', { duration: 3000 });
-    }
+
   }
 }

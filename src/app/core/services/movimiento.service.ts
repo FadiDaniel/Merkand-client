@@ -15,7 +15,6 @@ export class MovimientoService {
   }
 
   registrarMovimiento(dto: CreateMovimientoDto, usuario: string): Movimiento {
-    // Buscar nombre del producto
     const producto = this.productoService.getById(dto.productoId);
     
     const nuevoMovimiento: Movimiento = {
@@ -32,14 +31,7 @@ export class MovimientoService {
   }
 
   registrarAjuste(dto: CreateMovimientoDto, usuario: string): Movimiento {
-    // Si es ajuste, también debemos actualizar el stock en ProductoService
-    // Si la cantidad es positiva suma, negativa resta.
-    // Asumiremos que el DTO trae la cantidad a ajustar (ej: +5 o -2)
-    
-    // Primero actualizamos stock
     this.productoService.updateStock(dto.productoId, dto.cantidad);
-
-    // Luego registramos el movimiento
     return this.registrarMovimiento(dto, usuario);
   }
 

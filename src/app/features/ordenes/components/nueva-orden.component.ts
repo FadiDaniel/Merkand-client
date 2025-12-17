@@ -235,7 +235,6 @@ export class NuevaOrdenComponent {
   productosFiltrados = computed(() => {
     let prods = this.productos().filter(p => p.active);
     
-    // Si es entrada y hay proveedor seleccionado, filtrar por ese proveedor
     if (this.tipoOrden() === 'entrada' && this.proveedorId()) {
       const prov = this.proveedores().find(p => p.id === this.proveedorId());
       if (prov) {
@@ -252,23 +251,19 @@ export class NuevaOrdenComponent {
 
   bloquearSeleccionProductos = computed(() => {
     if (this.tipoOrden() === 'entrada' && !this.proveedorId()) return true;
-    if (this.tipoOrden() === 'salida' && !this.clienteRef()) return false; // Cliente es opcional o requerido? Requerido en form
+    if (this.tipoOrden() === 'salida' && !this.clienteRef()) return false; 
     return false;
   });
 
   constructor() {
-    // Reset cuando cambia el tipo
   }
 
   onTipoChange() {
-    this.productosOrden.set([]);
-    this.productoSeleccionado.set(null);
-    this.proveedorId.set(null);
-    this.clienteRef.set('');
+
   }
 
   onProveedorChange() {
-    this.productosOrden.set([]); // Limpiar productos si cambia proveedor
+    this.productosOrden.set([]); 
     this.productoSeleccionado.set(null);
   }
 
@@ -280,33 +275,7 @@ export class NuevaOrdenComponent {
   }
 
   agregarProducto(): void {
-    // const prodId = this.productoSeleccionado();
-    // const cant = this.cantidad();
 
-    // if (!prodId || cant <= 0) {
-    //   this.snackBar.open('Seleccione un producto y cantidad válida', 'Cerrar', { duration: 3000 });
-    //   return;
-    // }
-
-    // const producto = this.productoService.getById(prodId);
-    // if (!producto) return;
-
-    // if (this.tipoOrden() === 'salida' && producto.stock < cant) {
-    //   this.snackBar.open(`Stock insuficiente. Disponible: ${producto.stock}`, 'Cerrar', { duration: 3000 });
-    //   return;
-    // }
-
-    // // const item: OrderItem = {
-    // //   productId: producto.id,
-    // //   productName: producto.name,
-    // //   quantity: cant,
-    // //   unitPrice: producto.price,
-    // //   subTotal: producto.price * cant
-    // // };
-
-    // this.productosOrden.update(prev => [...prev, item]);
-    // this.productoSeleccionado.set(null);
-    // this.cantidad.set(1);
   }
 
   eliminarProducto(index: number): void {
@@ -315,22 +284,6 @@ export class NuevaOrdenComponent {
 
   onSubmit(): void {
     console.log(this.productosOrden());
-    // const orden = this.ordenService.create(
-    //   {
-    //     tipo: this.tipoOrden(),
-    //     proveedor: this.tipoOrden() === 'entrada' ? this.getProveedorNombre() : undefined,
-    //     cliente: this.tipoOrden() === 'salida' ? this.clienteRef() : undefined,
-    //     productos: this.productosOrden()
-    //   },
-    //   this.authService.user() || 'Sistema'
-    // );
-
-    // if (orden) {
-    //   this.snackBar.open('Orden creada exitosamente', 'Cerrar', { duration: 3000 });
-    //   this.router.navigate(['/ordenes']);
-    // } else {
-    //   this.snackBar.open('Error al crear la orden', 'Cerrar', { duration: 3000 });
-    // }
   }
 
   private getProveedorNombre(): string {

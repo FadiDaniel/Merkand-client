@@ -150,11 +150,7 @@ export class MovimientosComponent {
   displayedColumns = ['fecha', 'producto', 'tipo', 'cantidad', 'motivo', 'usuario'];
 
   esSalida(mov: any): boolean {
-    return mov.tipo === 'salida' || (mov.tipo === 'ajuste' && mov.cantidad < 0); // Ajustes pueden ser negativos aunque cantidad venga abs siempre? En mi logica no.
-    // Revisar logica de ajuste. Si es ajuste positivo suma, negativo resta. 
-    // En mi CreateMovimientoDto cantidad es number.
-    // Simplemente checkeamos el tipo. Salida siempre reduce. Entrada siempre suma.
-    // Ajuste depende del signo... pero visualmente si tipo es Salida le pongo menos.
+    return mov.tipo === 'salida' || (mov.tipo === 'ajuste' && mov.cantidad < 0); 
   }
 
   nuevoAjuste() {

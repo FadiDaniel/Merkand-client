@@ -52,7 +52,6 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Componente inicializado
   }
 
   navigateTo(route: string): void {
