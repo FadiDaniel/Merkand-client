@@ -14,7 +14,7 @@ import { ProductoService } from '../../../core/services/producto.service';
 import { OrdenService } from '../../../core/services/orden.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProveedorService } from '../../../core/services/proveedor.service';
-import { OrdenProducto } from '../../../models/orden.model';
+import { OrderItem } from '../../../models/orden.model';
 
 @Component({
   selector: 'app-nueva-orden',
@@ -227,7 +227,7 @@ export class NuevaOrdenComponent {
   
   productoSeleccionado = signal(null);
   cantidad = signal(1);
-  productosOrden = signal<OrdenProducto[]>([]);
+  productosOrden = signal<OrderItem[]>([]);
 
   proveedores = this.proveedorService.proveedores$;
   productos = this.productoService.productos$;
@@ -247,7 +247,7 @@ export class NuevaOrdenComponent {
   });
 
   total = computed(() => {
-    return this.productosOrden().reduce((sum, p) => sum + p.subtotal, 0);
+    return this.productosOrden().reduce((sum, p) => sum + p.subTotal, 0);
   });
 
   bloquearSeleccionProductos = computed(() => {
@@ -280,33 +280,33 @@ export class NuevaOrdenComponent {
   }
 
   agregarProducto(): void {
-    const prodId = this.productoSeleccionado();
-    const cant = this.cantidad();
+    // const prodId = this.productoSeleccionado();
+    // const cant = this.cantidad();
 
-    if (!prodId || cant <= 0) {
-      this.snackBar.open('Seleccione un producto y cantidad válida', 'Cerrar', { duration: 3000 });
-      return;
-    }
+    // if (!prodId || cant <= 0) {
+    //   this.snackBar.open('Seleccione un producto y cantidad válida', 'Cerrar', { duration: 3000 });
+    //   return;
+    // }
 
-    const producto = this.productoService.getById(prodId);
-    if (!producto) return;
+    // const producto = this.productoService.getById(prodId);
+    // if (!producto) return;
 
-    if (this.tipoOrden() === 'salida' && producto.stock < cant) {
-      this.snackBar.open(`Stock insuficiente. Disponible: ${producto.stock}`, 'Cerrar', { duration: 3000 });
-      return;
-    }
+    // if (this.tipoOrden() === 'salida' && producto.stock < cant) {
+    //   this.snackBar.open(`Stock insuficiente. Disponible: ${producto.stock}`, 'Cerrar', { duration: 3000 });
+    //   return;
+    // }
 
-    const item: OrdenProducto = {
-      productoId: producto.id,
-      nombreProducto: producto.name,
-      cantidad: cant,
-      precioUnitario: producto.price,
-      subtotal: producto.price * cant
-    };
+    // // const item: OrderItem = {
+    // //   productId: producto.id,
+    // //   productName: producto.name,
+    // //   quantity: cant,
+    // //   unitPrice: producto.price,
+    // //   subTotal: producto.price * cant
+    // // };
 
-    this.productosOrden.update(prev => [...prev, item]);
-    this.productoSeleccionado.set(null);
-    this.cantidad.set(1);
+    // this.productosOrden.update(prev => [...prev, item]);
+    // this.productoSeleccionado.set(null);
+    // this.cantidad.set(1);
   }
 
   eliminarProducto(index: number): void {

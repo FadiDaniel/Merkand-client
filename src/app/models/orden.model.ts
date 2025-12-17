@@ -1,28 +1,32 @@
 export interface Orden {
   id: number;
-  numeroOrden: string;
-  fecha: Date;
-  proveedor?: string;
-  productos: OrdenProducto[];
-  total: number;
-  estado: 'PENDING' | 'RECEIVED' | 'CANCELLED';
-  observaciones?: string;
-  creadoPor: string;
-  fechaCreacion: Date;
+  orderNumber: string;
+  orderDate: string;
+  orderItemList: OrderItem[];
+  totalAmount: number;
+  status: 'PENDING' | 'RECEIVED' | 'CANCELLED';
+  observations?: string;
   supplierId: number;
   supplierName: string;
+  userId: number;
+  userName: string;
 }
 
-export interface OrdenProducto {
-  productoId: number;
-  nombreProducto: string;
-  cantidad: number;
-  precioUnitario: number;
-  subtotal: number;
+export interface OrderItem {
+  itemId: number;
+  quantity: number;
+  unitPrice: number;
+  subTotal: number;
+  productName: string;
+  productId: number;
+  orderId: number;
+  orderNumber: string;
 }
 
-export interface CreateOrdenDto {
-  proveedor?: string;
-  productos: OrdenProducto[];
-  observaciones?: string;
+export interface CreateOrdenDto {    
+  orderNumber: string;
+  orderDate: string;
+  supplierId: number;
+  orderItemList: OrderItem[];
+  observations?: string;
 }

@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     const ordenesHoy = ordenes.filter(o => {
-      const ordenDate = new Date(o.fecha);
+      const ordenDate = new Date(o.orderDate);
       ordenDate.setHours(0, 0, 0, 0);
       return ordenDate.getTime() === today.getTime();
     });

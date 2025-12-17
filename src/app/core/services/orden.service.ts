@@ -1,18 +1,16 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { Orden, CreateOrdenDto, OrdenProducto } from '../../models/orden.model';
-import { ProductoService } from './producto.service';
-import { MovimientoService } from './movimiento.service'; 
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Orden, CreateOrdenDto } from '../../models/orden.model';
+import { ProductoService } from './producto.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdenService {
-  private productoService = inject(ProductoService);
-  private movimientoService = inject(MovimientoService);
   private http = inject(HttpClient);
+  private productoService = inject(ProductoService);
   private apiUrl = 'http://localhost:8080/api/orders'; 
 
   private ordenes = signal<Orden[]>([]);
@@ -24,8 +22,11 @@ export class OrdenService {
 
   fetchAll(): void {
     this.http.get<Orden[]>(this.apiUrl).subscribe({
-      next: (data) => this.ordenes.set(data),
-      error: (err) => console.error('Error fetching orders', err)
+      next: (data) => {
+        console.log("Órdenes recibidas del backend:", data);
+        this.ordenes.set(data);
+      },
+      error: (err) => console.error('Error al obtener órdenes', err)
     });
   }
 
@@ -33,61 +34,56 @@ export class OrdenService {
     return this.ordenes().find(o => o.id === id);
   }
 
-
   create(dto: CreateOrdenDto): Observable<Orden> {
     return this.http.post<Orden>(this.apiUrl, dto).pipe(
       tap({
         next: (newOrden) => {
-          this.ordenes.update(ordenes => [...ordenes, newOrden]);
+          this.ordenes.update(current => [...current, newOrden]);
         },
-        error: (err) => console.error('Error creating order', err)
+        error: (err) => console.error('Error al crear la orden', err)
       })
     );
   }
 
   receiveOrder(ordenId: number): void {
     const orden = this.getById(ordenId);
-    if (!orden || orden.estado !== 'PENDING') {
-      console.warn('Cannot receive order: Order not found or not in PENDING status.');
+    
+    if (!orden || orden.status !== 'PENDING') {
+      console.warn('No se puede recibir: Orden no encontrada o no está PENDIENTE.');
       return;
     }
 
     this.http.put<Orden>(`${this.apiUrl}/${ordenId}/receive`, {}).subscribe({
       next: (updatedOrden) => {
-        this.ordenes.update(ordenes => 
-          ordenes.map(o => o.id === ordenId ? updatedOrden : o)
+        this.ordenes.update(list => 
+          list.map(o => o.id === ordenId ? updatedOrden : o)
         );
 
-        updatedOrden.productos.forEach(item => {
-          this.productoService.updateStock(item.productoId, item.cantidad);
+        updatedOrden.orderItemList?.forEach(item => {
+          this.productoService.updateStock(item.productId, item.quantity);
         });
 
-        console.log(`Order ${ordenId} received and stock updated.`);
+        console.log(`Orden ${ordenId} recibida correctamente.`);
       },
-      error: (err) => console.error('Error receiving order', err)
+      error: (err) => console.error('Error al recibir la orden', err)
     });
   }
-  
 
   cancelOrder(ordenId: number): void {
     const orden = this.getById(ordenId);
-    if (!orden || orden.estado !== 'PENDING') {
-      console.warn('Cannot cancel order: Order not found or not in PENDING status.');
+    if (!orden || orden.status !== 'PENDING') {
+      console.warn('No se puede cancelar: Orden no encontrada o no está PENDIENTE.');
       return;
     }
     
     this.http.put<Orden>(`${this.apiUrl}/${ordenId}/cancel`, {}).subscribe({
       next: (updatedOrden) => {
-        this.ordenes.update(ordenes => 
-          ordenes.map(o => o.id === ordenId ? updatedOrden : o)
+        this.ordenes.update(list => 
+          list.map(o => o.id === ordenId ? updatedOrden : o)
         );
-        console.log(`Order ${ordenId} cancelled.`);
+        console.log(`Orden ${ordenId} cancelada.`);
       },
-      error: (err) => console.error('Error cancelling order', err)
+      error: (err) => console.error('Error al cancelar la orden', err)
     });
-  }
-
-  private calculateTotal(productos: OrdenProducto[]): number {
-    return productos.reduce((sum, item) => sum + item.subtotal, 0);
   }
 }

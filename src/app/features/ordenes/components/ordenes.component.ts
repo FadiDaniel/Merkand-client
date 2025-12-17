@@ -3,7 +3,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe,NgClass } from '@angular/common';
 import { OrdenService } from '../../../core/services/orden.service';
 
 @Component({
@@ -15,7 +15,8 @@ import { OrdenService } from '../../../core/services/orden.service';
     MatIconModule,
     MatTableModule,
     CurrencyPipe,
-    DatePipe
+    DatePipe,
+    NgClass
   ],
   template: `
     <div class="ordenes-container">
@@ -30,58 +31,56 @@ import { OrdenService } from '../../../core/services/orden.service';
       <mat-card>
         <mat-card-content>
           <div class="table-container">
-            <table mat-table [dataSource]="ordenes()" class="ordenes-table">
-              <ng-container matColumnDef="numeroOrden">
-                <th mat-header-cell *matHeaderCellDef>Número</th>
-                <td mat-cell *matCellDef="let orden">{{ orden.numeroOrden }}</td>
-              </ng-container>
+            <table mat-table [dataSource]="ordenes$()" class="ordenes-table">
               
-              <ng-container matColumnDef="proveedor">
-                <th mat-header-cell *matHeaderCellDef>Proveedor</th>
-                <td mat-cell *matCellDef="let orden">{{ orden.supplierName || orden.proveedor }}</td>
+              <ng-container matColumnDef="orderNumber">
+                <th mat-header-cell *matHeaderCellDef>Número</th>
+                <td mat-cell *matCellDef="let orden">{{ orden.orderNumber }}</td>
               </ng-container>
 
-
-              <ng-container matColumnDef="fecha">
+              <ng-container matColumnDef="orderDate">
                 <th mat-header-cell *matHeaderCellDef>Fecha</th>
-                <td mat-cell *matCellDef="let orden">{{ orden.fecha | date:'short' }}</td>
+                <td mat-cell *matCellDef="let orden">{{ orden.orderDate | date:'dd/MM/yyyy' }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="total">
+              <ng-container matColumnDef="supplierName">
+                <th mat-header-cell *matHeaderCellDef>Proveedor</th>
+                <td mat-cell *matCellDef="let orden">{{ orden.supplierName || 'N/A' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="itemsCount">
+                <th mat-header-cell *matHeaderCellDef>Productos</th>
+                <td mat-cell *matCellDef="let orden">
+                  {{ orden.orderItemList?.length || 0 }}
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="totalAmount">
                 <th mat-header-cell *matHeaderCellDef>Total</th>
-                <td mat-cell *matCellDef="let orden">{{ orden.total | currency }}</td>
+                <td mat-cell *matCellDef="let orden">{{ orden.totalAmount | currency }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="estado">
+              <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef>Estado</th>
                 <td mat-cell *matCellDef="let orden">
-                  <span [class]="'estado-badge ' + orden.estado?.toLowerCase()">{{ orden.estado }}</span>
-                </td>
-              </ng-container>
-              
-              <ng-container matColumnDef="acciones">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let orden">
-                  <button mat-icon-button color="primary" [disabled]="orden.estado !== 'PENDING'" (click)="receiveOrder(orden.id)" title="Recibir Orden">
-                     <mat-icon>local_shipping</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" [disabled]="orden.estado !== 'PENDING'" (click)="cancelOrder(orden.id)" title="Cancelar Orden">
-                     <mat-icon>close</mat-icon>
-                  </button>
+                  <span class="estado-badge" [ngClass]="orden.status?.toLowerCase()">
+                    {{ orden.status }}
+                  </span>
                 </td>
               </ng-container>
 
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                <td mat-cell *matCellDef="let orden">
+                  <button mat-icon-button color="accent" (click)="verDetalle(orden)">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
-
-            @if (ordenes().length === 0) {
-              <div class="no-data">
-                <mat-icon>receipt_long</mat-icon>
-                <p>No hay órdenes registradas</p>
-              </div>
-            }
           </div>
         </mat-card-content>
       </mat-card>
@@ -153,14 +152,30 @@ import { OrdenService } from '../../../core/services/orden.service';
       height: 64px;
       margin-bottom: 16px;
     }
+
+    .estado-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .estado-badge.pending { background-color: #fff9c4; color: #f57f17; }
+    .estado-badge.received { background-color: #c8e6c9; color: #388e3c; }
+    .estado-badge.cancelled { background-color: #ffcdd2; color: #d32f2f; }
   `]
 })
 export class OrdenesComponent {
   private ordenService = inject(OrdenService);
   
-  displayedColumns: string[] = ['numeroOrden', 'proveedor', 'fecha', 'total', 'estado', 'acciones'];
+  displayedColumns: string[] = ['orderNumber', 'orderDate', 'supplierName', 'itemsCount', 'totalAmount', 'status', 'actions'];
   
-  readonly ordenes = this.ordenService.ordenes$;
+  readonly ordenes$ = this.ordenService.ordenes$;
+
+  verDetalle(orden: any) {
+    console.log('Detalle de la orden:', orden);
+  }
   
   receiveOrder(id: number): void {
     this.ordenService.receiveOrder(id);

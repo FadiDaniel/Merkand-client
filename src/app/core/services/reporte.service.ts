@@ -84,8 +84,8 @@ export class ReporteService {
     const ordenes = this.ordenService.ordenes$();
     const conteo = new Map<string, number>();
 
-    ordenes.filter(o => o.estado === 'RECEIVED' && o.proveedor).forEach(o => {
-      const prov = o.proveedor!;
+    ordenes.filter(o => o.status === 'RECEIVED' && o.supplierName).forEach(o => {
+      const prov = o.supplierName!;
       conteo.set(prov, (conteo.get(prov) || 0) + 1);
     });
 
