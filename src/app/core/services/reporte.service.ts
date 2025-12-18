@@ -52,16 +52,16 @@ export class ReporteService {
     }
 
     movimientos.forEach(m => {
-      const fecha = new Date(m.fecha);
+      const fecha = new Date(m.date);
       const diffMonths = (hoy.getFullYear() - fecha.getFullYear()) * 12 + (hoy.getMonth() - fecha.getMonth());
       
       if (diffMonths >= 0 && diffMonths < 6) {
         const index = 5 - diffMonths;
         
-        if (m.tipo === 'entrada') {
-          dataEntradas[index] += m.cantidad;
-        } else if (m.tipo === 'salida') {
-          dataSalidas[index] += Math.abs(m.cantidad); 
+        if (m.movementType === 'IN') {
+          dataEntradas[index] += m.quantity;
+        } else if (m.movementType === 'OUT') {
+          dataSalidas[index] += Math.abs(m.quantity); 
         }
       }
     });
@@ -108,8 +108,8 @@ export class ReporteService {
     // Ids de productos con movimiento reciente
     const productosConMov = new Set(
       movimientos
-        .filter(m => new Date(m.fecha) >= treintaDiasAtras)
-        .map(m => m.productoId)
+        .filter(m => new Date(m.date) >= treintaDiasAtras)
+        .map(m => m.productId)
     );
 
     return productos.filter(p => !productosConMov.has(p.id) && p.active);

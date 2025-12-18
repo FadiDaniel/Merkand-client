@@ -8,6 +8,7 @@ import { DatePipe, UpperCasePipe } from '@angular/common';
 import { MovimientoService } from '../../../core/services/movimiento.service';
 import { MovimientoAjusteDialogComponent } from './movimiento-ajuste-dialog.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { Movimiento } from '../../../models/movimiento.model';
 
 @Component({
   selector: 'app-movimientos',
@@ -20,58 +21,46 @@ import { AuthService } from '../../../core/services/auth.service';
     DatePipe,
     UpperCasePipe
   ],
-  template: `
+  template: ` 
     <div class="movimientos-container">
-      <div class="header">
-        <h1 class="page-title">Movimientos de Stock</h1>
-        
-        @if (isAdmin()) {
-          <button mat-raised-button color="primary" (click)="nuevoAjuste()">
-            <mat-icon>tune</mat-icon>
-            Nuevo Ajuste / Inventario
-          </button>
-        }
-      </div>
-
       <mat-card>
         <mat-card-content>
           @if (movimientos().length > 0) {
             <table mat-table [dataSource]="movimientos()" class="movimientos-table">
               <ng-container matColumnDef="fecha">
                 <th mat-header-cell *matHeaderCellDef>Fecha</th>
-                <td mat-cell *matCellDef="let mov">{{ mov.fecha | date:'short' }}</td>
+                <td mat-cell *matCellDef="let mov">{{ mov.date | date:'dd/MM/yyyy HH:mm' }}</td>
               </ng-container>
 
               <ng-container matColumnDef="producto">
                 <th mat-header-cell *matHeaderCellDef>Producto</th>
-                <td mat-cell *matCellDef="let mov">{{ mov.nombreProducto }}</td>
+                <td mat-cell *matCellDef="let mov">{{ mov.productName }}</td>
               </ng-container>
 
               <ng-container matColumnDef="tipo">
                 <th mat-header-cell *matHeaderCellDef>Tipo</th>
                 <td mat-cell *matCellDef="let mov">
-                  <span [class]="'tipo-badge ' + mov.tipo">{{ mov.tipo | uppercase }}</span>
+                  <span [class]="'tipo-badge ' + mov.movementType.toLowerCase()">
+                    {{ mov.movementType | uppercase }}
+                  </span>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="cantidad">
                 <th mat-header-cell *matHeaderCellDef>Cantidad</th>
                 <td mat-cell *matCellDef="let mov" [class.negativo]="esSalida(mov)" [class.positivo]="!esSalida(mov)">
-                  {{ esSalida(mov) ? '-' : '+' }}{{ mov.cantidad }}
+                  {{ esSalida(mov) ? '-' : '+' }}{{ mov.quantity }}
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="motivo">
+              <ng-container matColumnDef="referencia">
                 <th mat-header-cell *matHeaderCellDef>Motivo / Referencia</th>
-                <td mat-cell *matCellDef="let mov">
-                  {{ mov.motivo }} 
-                  @if (mov.referencia) { <small>({{ mov.referencia }})</small> }
-                </td>
+                <td mat-cell *matCellDef="let mov">{{ mov.reference }}</td>
               </ng-container>
 
               <ng-container matColumnDef="usuario">
                 <th mat-header-cell *matHeaderCellDef>Usuario</th>
-                <td mat-cell *matCellDef="let mov">{{ mov.usuario }}</td>
+                <td mat-cell *matCellDef="let mov">{{ mov.userName }}</td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -83,7 +72,7 @@ import { AuthService } from '../../../core/services/auth.service';
               <p>No hay movimientos registrados</p>
             </div>
           }
-        </mat-card-content>
+          </mat-card-content>
       </mat-card>
     </div>
   `,
@@ -119,11 +108,10 @@ import { AuthService } from '../../../core/services/auth.service';
       font-weight: 500;
     }
 
-    .tipo-badge.entrada { background-color: #e3f2fd; color: #1976d2; }
-    .tipo-badge.salida { background-color: #fff3e0; color: #e65100; }
-    .tipo-badge.ajuste { background-color: #f3e5f5; color: #7b1fa2; }
-    .tipo-badge.inventario-inicial { background-color: #e8f5e9; color: #2e7d32; }
-
+    .tipo-badge.in { background-color: #e8f5e9; color: #2e7d32; }      /* Verde para Entradas */
+    .tipo-badge.out { background-color: #ffebee; color: #c62828; }     /* Rojo para Salidas */
+    .tipo-badge.adjust { background-color: #f3e5f5; color: #7b1fa2; }  /* Morado para Ajustes */
+    
     .negativo { color: #d32f2f; font-weight: 500; }
     .positivo { color: #388e3c; font-weight: 500; }
 
@@ -147,10 +135,10 @@ export class MovimientosComponent {
   movimientos = this.movimientoService.movimientos$;
   isAdmin = this.authService.isAdmin;
   
-  displayedColumns = ['fecha', 'producto', 'tipo', 'cantidad', 'motivo', 'usuario'];
+  displayedColumns = ['fecha', 'producto', 'tipo', 'cantidad', 'referencia', 'usuario'];
 
-  esSalida(mov: any): boolean {
-    return mov.tipo === 'salida' || (mov.tipo === 'ajuste' && mov.cantidad < 0); 
+  esSalida(mov: Movimiento): boolean {
+    return mov.movementType === 'OUT' || (mov.movementType === 'ADJUST' && mov.quantity < 0); 
   }
 
   nuevoAjuste() {

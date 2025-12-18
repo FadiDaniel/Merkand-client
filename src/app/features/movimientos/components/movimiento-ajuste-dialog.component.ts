@@ -80,7 +80,7 @@ export class MovimientoAjusteDialogComponent {
   productos = this.productoService.productos$;
 
   formData = {
-    tipo: 'ajuste' as const,
+    tipo: 'ADJUST' as const,
     productoId: 5,
     cantidad: 0,
     motivo: ''
@@ -93,13 +93,13 @@ export class MovimientoAjusteDialogComponent {
     }
 
     const dto: CreateMovimientoDto = {
-      tipo: this.formData.tipo,
-      productoId: this.formData.productoId,
-      cantidad: this.formData.cantidad,
-      motivo: this.formData.motivo
+      movementType: this.formData.tipo,
+      productId: this.formData.productoId,
+      quantity: this.formData.cantidad,
+      reason: this.formData.motivo
     };
 
-    this.movimientoService.registrarAjuste(dto, this.authService.user()?.username || 'Admin');
+    this.movimientoService.registrarAjuste(dto);
     
     this.snackBar.open('Movimiento registrado exitosamente', 'Cerrar', { duration: 3000 });
     this.dialogRef.close(true);

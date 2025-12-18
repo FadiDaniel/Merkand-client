@@ -1,19 +1,19 @@
 export interface Movimiento {
   id: number;
-  tipo: 'entrada' | 'salida' | 'ajuste' | 'inventario-inicial';
-  productoId: number;
-  nombreProducto?: string; 
-  cantidad: number;
-  fecha: Date;
-  usuario: string; 
-  referencia?: string; 
-  motivo: string;
+  movementType: 'IN' | 'OUT' | 'ADJUST';
+  quantity: number;
+  date: Date;
+  reference?: string; 
+  productId: number;
+  productName?: string; 
+  userId?: string; 
+  userName?: string;
 }
 
 export interface CreateMovimientoDto {
-  tipo: 'entrada' | 'salida' | 'ajuste' | 'inventario-inicial';
-  productoId: number;
-  cantidad: number;
-  referencia?: string;
-  motivo: string;
+  movementType: 'IN' | 'OUT' | 'ADJUST';
+  productId: number;
+  quantity: number;
+  reference?: string;
+  reason: string;
 }

@@ -4,12 +4,14 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Orden, CreateOrdenDto } from '../../models/orden.model';
 import { ProductoService } from './producto.service';
+import { MovimientoService } from './movimiento.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrdenService {
   private http = inject(HttpClient);
+  private movimientoService = inject(MovimientoService);
   private productoService = inject(ProductoService);
   private apiUrl = 'http://localhost:8080/api/orders'; 
 
@@ -45,27 +47,31 @@ export class OrdenService {
     );
   }
 
-  receiveOrder(ordenId: number): void {
+receiveOrder(ordenId: number): void {
     const orden = this.getById(ordenId);
-    
     if (!orden || orden.status !== 'PENDING') {
-      console.warn('No se puede recibir: Orden no encontrada o no está PENDIENTE.');
       return;
     }
 
     this.http.put<Orden>(`${this.apiUrl}/${ordenId}/receive`, {}).subscribe({
       next: (updatedOrden) => {
-        this.ordenes.update(list => 
-          list.map(o => o.id === ordenId ? updatedOrden : o)
+        this.ordenes.update(ordenes => 
+          ordenes.map(o => o.id === ordenId ? updatedOrden : o)
         );
 
-        updatedOrden.orderItemList?.forEach(item => {
+        updatedOrden.orderItemList.forEach(item => {
           this.productoService.updateStock(item.productId, item.quantity);
+          
+          this.movimientoService.registrarMovimiento({
+            movementType: 'IN',
+            productId: item.productId,
+            quantity: item.quantity,
+            reference: `RECEPCIÓN ORDEN: ${updatedOrden.orderNumber}`,
+            reason: 'Compra a proveedor'
+          });
         });
-
-        console.log(`Orden ${ordenId} recibida correctamente.`);
       },
-      error: (err) => console.error('Error al recibir la orden', err)
+      error: (err) => console.error('Error receiving order', err)
     });
   }
 
