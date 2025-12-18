@@ -1,9 +1,9 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { User, LoginCredentials, AuthState, AuthResponse } from '../../models/user.model';
+import { User, LoginCredentials, AuthState, AuthResponse, UserRole } from '../../models/user.model'; 
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { tap, map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,28 +13,29 @@ export class AuthService {
     user: null,
     isAuthenticated: false
   });
+
   private http = inject(HttpClient);
+  private router = inject(Router);
   private apiUrl = 'http://localhost:8080/api/auth';
 
   readonly user = computed(() => this.authState().user);
   readonly isAuthenticated = computed(() => this.authState().isAuthenticated);
-  readonly isAdmin = computed(() => this.authState().user?.isAdmin ?? false);
+  readonly isAdmin = computed(() => this.authState().user?.role === UserRole.ADMIN);
 
-  constructor(private router: Router) {
+  constructor() {
     this.loadAuthState();
   }
 
   login(credentials: LoginCredentials): Observable<boolean> {
-    return this.http.post<AuthResponse>(this.apiUrl + '/login', credentials).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        //console.log('Backend response:', response);
         if (response && response.token) {
           localStorage.setItem('token', response.token);
           
-          const authenticatedUser: User = response.user || {
-            username: credentials.username,
-            isAdmin: credentials.username === 'admin', 
-            fullName: credentials.username
+          const authenticatedUser: User = {
+            username: response.userName,
+            role: response.role as UserRole,
+            fullName: response.userName
           };
 
           this.authState.set({
@@ -45,10 +46,7 @@ export class AuthService {
           this.saveAuthState();
         }
       }),
-      map(response => {
-        // Return true if token exists
-        return !!(response && response.token);
-      })
+      map(response => !!(response && response.token))
     );
   }
 

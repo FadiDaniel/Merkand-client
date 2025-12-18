@@ -7,17 +7,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProveedorService } from '../../../core/services/proveedor.service';
 import { ProveedorFormDialogComponent } from './proveedor-form-dialog.component';
-import { Proveedor, CreateProveedorDto } from '../../../models/proveedor.model';
+import { Proveedor, CreateProveedorDto, UpdateProveedorDto } from '../../../models/proveedor.model';
 
 @Component({
   selector: 'app-proveedores',
-  imports: [
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule
-  ],
+  standalone: true,
+  imports: [MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
   template: `
     <div class="proveedores-container">
       <div class="header">
@@ -32,22 +27,42 @@ import { Proveedor, CreateProveedorDto } from '../../../models/proveedor.model';
         <mat-card-content>
           @if (proveedores().length > 0) {
             <table mat-table [dataSource]="proveedores()" class="proveedores-table">
+              
+              <ng-container matColumnDef="nif">
+                <th mat-header-cell *matHeaderCellDef>NIF</th>
+                <td mat-cell *matCellDef="let prov">{{ prov.nif }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="nombre">
                 <th mat-header-cell *matHeaderCellDef>Empresa</th>
-                <td mat-cell *matCellDef="let prov">{{ prov.nombre }}</td>
+                <td mat-cell *matCellDef="let prov">{{ prov.name }}</td>
               </ng-container>
 
               <ng-container matColumnDef="contacto">
                 <th mat-header-cell *matHeaderCellDef>Contacto</th>
                 <td mat-cell *matCellDef="let prov">
-                  {{ prov.contacto }}
-                  <div class="sub-text">{{ prov.email }}</div>
+                  {{ prov.contactName }}
+                  <div class="sub-text">{{ prov.email }} | {{ prov.phone }}</div>
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="ubicacion">
-                <th mat-header-cell *matHeaderCellDef>Ubicación</th>
-                <td mat-cell *matCellDef="let prov">{{ prov.ciudad }}, {{ prov.pais }}</td>
+              <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef>Estado</th>
+                <td mat-cell *matCellDef="let prov">
+                  <span class="status-pill" [class.active]="prov.active" [class.inactive]="!prov.active">
+                    {{ prov.active ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="productos">
+                <th mat-header-cell *matHeaderCellDef>Productos</th>
+                <td mat-cell *matCellDef="let prov">{{ prov.productList.length }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="direccion">
+                <th mat-header-cell *matHeaderCellDef>Dirección</th>
+                <td mat-cell *matCellDef="let prov">{{ prov.address }}</td>
               </ng-container>
 
               <ng-container matColumnDef="acciones">
@@ -56,7 +71,7 @@ import { Proveedor, CreateProveedorDto } from '../../../models/proveedor.model';
                   <button mat-icon-button color="primary" (click)="editarProveedor(prov)">
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="eliminarProveedor(prov)">
+                  <button mat-icon-button color="warn" (click)="eliminarProveedor(prov.id)">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -120,6 +135,27 @@ import { Proveedor, CreateProveedorDto } from '../../../models/proveedor.model';
       height: 64px;
       margin-bottom: 16px;
     }
+
+    .status-pill {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block; 
+    text-align: center;
+    min-width: 70px;
+    }
+
+    .status-pill.active {
+      background-color: #d3eed5ff;
+      color: #2a702dff;
+    }
+
+    .status-pill.inactive {
+      background-color: #f0d9d8ff;
+      color: #7a5754ff;
+      border: 1px solid #cfd8dc;
+    }
   `]
 })
 export class ProveedoresComponent {
@@ -128,10 +164,18 @@ export class ProveedoresComponent {
   private snackBar = inject(MatSnackBar);
 
   proveedores = this.proveedorService.proveedores$;
-  displayedColumns = ['nombre', 'contacto', 'ubicacion', 'acciones'];
+  displayedColumns = ['nif', 'nombre', 'contacto', 'direccion', 'productos', 'estado', 'acciones'];
 
   crearProveedor() {
-
+    const dialogRef = this.dialog.open(ProveedorFormDialogComponent, { width: '600px' });
+    dialogRef.afterClosed().subscribe((result: CreateProveedorDto) => {
+      if (result) {
+        this.proveedorService.create(result).subscribe({
+          next: () => this.snackBar.open('Proveedor creado', 'Cerrar', { duration: 3000 }),
+          error: () => this.snackBar.open('Error al crear proveedor', 'Cerrar')
+        });
+      }
+    });
   }
 
   editarProveedor(proveedor: Proveedor) {
@@ -140,12 +184,20 @@ export class ProveedoresComponent {
       data: { proveedor }
     });
 
-    dialogRef.afterClosed().subscribe((result: CreateProveedorDto) => {
-
+    dialogRef.afterClosed().subscribe((result: UpdateProveedorDto) => {
+      if (result) {
+        this.proveedorService.update(proveedor.id, result).subscribe({
+          next: () => this.snackBar.open('Proveedor actualizado', 'Cerrar', { duration: 3000 })
+        });
+      }
     });
   }
 
-  eliminarProveedor(proveedor: Proveedor) {
-
+  eliminarProveedor(id: number) {
+    if (confirm('¿Estás seguro de eliminar este proveedor?')) {
+      this.proveedorService.delete(id).subscribe({
+        next: () => this.snackBar.open('Proveedor eliminado', 'Cerrar', { duration: 3000 })
+      });
+    }
   }
 }

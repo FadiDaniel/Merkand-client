@@ -1,6 +1,7 @@
+
 export interface User {
   username: string;
-  isAdmin: boolean;
+  role: UserRole; 
   email?: string;
   fullName?: string;
 }
@@ -17,5 +18,11 @@ export interface AuthState {
 
 export interface AuthResponse {
   token: string;
-  user?: User; // Optional, in case backend sends user info.
+  role: UserRole; 
+  userName: string;
+}
+
+export enum UserRole {
+  ADMIN = 'ROLE_ADMIN',
+  OPERATOR = 'ROLE_OPERATOR', 
 }

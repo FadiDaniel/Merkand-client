@@ -27,18 +27,18 @@ export interface ProveedorDialogData {
       <form #form="ngForm">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre Empresa</mat-label>
-          <input matInput [(ngModel)]="formData.nombre" name="nombre" required>
+          <input matInput [(ngModel)]="formData.name" name="name" required>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Contacto Principal</mat-label>
-          <input matInput [(ngModel)]="formData.contacto" name="contacto" required>
+          <input matInput [(ngModel)]="formData.contactName" name="contactName" required>
         </mat-form-field>
 
         <div class="row">
           <mat-form-field appearance="outline">
             <mat-label>Teléfono</mat-label>
-            <input matInput [(ngModel)]="formData.telefono" name="telefono" required>
+            <input matInput [(ngModel)]="formData.phone" name="phone" required>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -49,20 +49,8 @@ export interface ProveedorDialogData {
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Dirección</mat-label>
-          <input matInput [(ngModel)]="formData.direccion" name="direccion" required>
+          <input matInput [(ngModel)]="formData.address" name="address" required>
         </mat-form-field>
-
-        <div class="row">
-          <mat-form-field appearance="outline">
-            <mat-label>Ciudad</mat-label>
-            <input matInput [(ngModel)]="formData.ciudad" name="ciudad" required>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>País</mat-label>
-            <input matInput [(ngModel)]="formData.pais" name="pais" required>
-          </mat-form-field>
-        </div>
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -82,13 +70,12 @@ export class ProveedorFormDialogComponent {
   public data = inject<ProveedorDialogData>(MAT_DIALOG_DATA);
 
   formData: CreateProveedorDto = {
-    nombre: this.data.proveedor?.nombre || '',
-    contacto: this.data.proveedor?.contacto || '',
-    telefono: this.data.proveedor?.telefono || '',
+    name: this.data.proveedor?.name || '',
+    contactName: this.data.proveedor?.contactName || '',
+    phone: this.data.proveedor?.phone || '',
     email: this.data.proveedor?.email || '',
-    direccion: this.data.proveedor?.direccion || '',
-    ciudad: this.data.proveedor?.ciudad || '',
-    pais: this.data.proveedor?.pais || ''
+    address: this.data.proveedor?.address || '',
+    nif: this.data.proveedor?.nif || '',
   };
 
   guardar() {

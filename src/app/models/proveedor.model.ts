@@ -1,24 +1,22 @@
 export interface Proveedor {
   id: number;
-  nombre: string;
-  contacto: string;
-  telefono: string;
+  nif: string;
+  name: string;
+  contactName: string;
+  phone: string;
   email: string;
-  direccion: string;
-  ciudad: string;
-  pais: string;
-  activo: boolean;
-  fechaCreacion: Date;
+  address: string;
+  active: boolean;
+  productList: number[];
 }
 
 export interface CreateProveedorDto {
-  nombre: string;
-  contacto: string;
-  telefono: string;
+  name: string;
+  nif: string;
+  contactName: string;
+  phone: string;
   email: string;
-  direccion: string;
-  ciudad: string;
-  pais: string;
+  address: string;
 }
 
 export interface UpdateProveedorDto extends Partial<CreateProveedorDto> {

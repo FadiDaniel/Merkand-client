@@ -238,7 +238,7 @@ export class NuevaOrdenComponent {
     if (this.tipoOrden() === 'entrada' && this.proveedorId()) {
       const prov = this.proveedores().find(p => p.id === this.proveedorId());
       if (prov) {
-        return prods.filter(p => p.supplierName === prov.nombre || p.supplierId === prov.id);
+        return prods.filter(p => p.supplierName === prov.name || p.supplierId === prov.id);
       }
     }
     
@@ -288,7 +288,7 @@ export class NuevaOrdenComponent {
 
   private getProveedorNombre(): string {
     const prov = this.proveedores().find(p => p.id == this.proveedorId());
-    return prov ? prov.nombre : '';
+    return prov ? prov.name : '';
   }
 
   onCancel(): void {
