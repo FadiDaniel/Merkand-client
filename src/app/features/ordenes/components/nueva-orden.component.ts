@@ -51,7 +51,7 @@ import { OrderItem } from '../../../models/orden.model';
                   <mat-label>Seleccionar Proveedor</mat-label>
                   <mat-select [(ngModel)]="proveedorId" name="proveedorId" (selectionChange)="onProveedorChange()" required>
                     @for (prov of proveedores(); track prov.id) {
-                      <mat-option [value]="prov.id">{{ prov.nombre }}</mat-option>
+                      <mat-option [value]="prov.id">{{ prov.name }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
