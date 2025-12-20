@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { CurrencyPipe, DatePipe,NgClass } from '@angular/common';
 import { OrdenService } from '../../../core/services/orden.service';
+import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
   selector: 'app-ordenes',
@@ -16,10 +17,12 @@ import { OrdenService } from '../../../core/services/orden.service';
     MatTableModule,
     CurrencyPipe,
     DatePipe,
-    NgClass
+    NgClass,
+    BackButtonComponent
   ],
   template: `
     <div class="ordenes-container">
+      <app-back-button route="/dashboard" label="Volver"></app-back-button>
       <div class="header">
         <h1 class="page-title">Órdenes de Compra</h1>
         <button mat-flat-button color="primary">

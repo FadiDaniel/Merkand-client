@@ -15,6 +15,7 @@ import { OrdenService } from '../../../core/services/orden.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProveedorService } from '../../../core/services/proveedor.service';
 import { OrderItem } from '../../../models/orden.model';
+import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
   selector: 'app-nueva-orden',
@@ -28,10 +29,12 @@ import { OrderItem } from '../../../models/orden.model';
     MatSelectModule,
     MatTableModule,
     MatSnackBarModule,
-    CurrencyPipe
+    CurrencyPipe,
+    BackButtonComponent
   ],
   template: `
     <div class="nueva-orden-container">
+      <app-back-button route="/dashboard" label="Volver"></app-back-button>
       <h1 class="page-title">Nueva Orden</h1>
 
       <mat-card>

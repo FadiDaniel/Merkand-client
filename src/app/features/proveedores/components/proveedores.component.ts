@@ -8,13 +8,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ProveedorService } from '../../../core/services/proveedor.service';
 import { ProveedorFormDialogComponent } from './proveedor-form-dialog.component';
 import { Proveedor, CreateProveedorDto, UpdateProveedorDto } from '../../../models/proveedor.model';
+import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
   selector: 'app-proveedores',
   standalone: true,
-  imports: [MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule],
+  imports: [MatCardModule, MatTableModule, MatButtonModule, MatIconModule, MatDialogModule, BackButtonComponent],
   template: `
     <div class="proveedores-container">
+      <app-back-button route="/dashboard" label="Volver"></app-back-button>
       <div class="header">
         <h1 class="page-title">Gestión de Proveedores</h1>
         <button mat-raised-button color="primary" (click)="crearProveedor()">

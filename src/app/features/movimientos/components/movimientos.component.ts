@@ -9,6 +9,7 @@ import { MovimientoService } from '../../../core/services/movimiento.service';
 import { MovimientoAjusteDialogComponent } from './movimiento-ajuste-dialog.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { Movimiento } from '../../../models/movimiento.model';
+import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
   selector: 'app-movimientos',
@@ -19,10 +20,19 @@ import { Movimiento } from '../../../models/movimiento.model';
     MatButtonModule,
     MatDialogModule,
     DatePipe,
-    UpperCasePipe
+    UpperCasePipe,
+    BackButtonComponent
   ],
   template: ` 
     <div class="movimientos-container">
+      <app-back-button route="/dashboard" label="Volver"></app-back-button>
+      <div class="header">
+        <h1 class="page-title">Movimientos</h1>
+         <button mat-flat-button color="primary" (click)="nuevoAjuste()">
+          <mat-icon>add</mat-icon>
+          Nuevo Ajuste
+        </button>
+      </div>
       <mat-card>
         <mat-card-content>
           @if (movimientos().length > 0) {

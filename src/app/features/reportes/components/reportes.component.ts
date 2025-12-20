@@ -9,6 +9,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ChartOptions } from 'chart.js';
 import { ReporteService } from '../../../core/services/reporte.service';
 import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
   selector: 'app-reportes',
@@ -23,9 +24,11 @@ import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
     BaseChartDirective, 
     CurrencyPipe, 
     DecimalPipe, 
-    DatePipe
+    DatePipe,
+    BackButtonComponent
   ],
   template: `
+    <app-back-button route="/dashboard" label="Volver"></app-back-button>
     <div class="reportes-container">
       <h1 class="page-title">Dashboard Analítico de Inventario</h1>
 
@@ -264,7 +267,7 @@ import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
   `,
   styles: [`
     .reportes-container { 
-      padding: 20px; 
+      padding: 0 20px 80px 20px; 
       background-color: #f5f7fa; 
       min-height: 100vh;
     }
