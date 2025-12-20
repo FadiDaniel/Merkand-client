@@ -19,7 +19,11 @@ export class ProductoService {
 
   fetchAll(): void {
     this.http.get<Producto[]>(this.apiUrl).subscribe({
-      next: (data) => this.productos.set(data),
+      next: (data) =>{
+        this.productos.set(data);
+        console.log("Productos recibidos del backend:", data);
+      },
+      
       error: (err) => console.error('Error fetching products', err)
     });
   }

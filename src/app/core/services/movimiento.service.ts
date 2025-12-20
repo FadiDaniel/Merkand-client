@@ -20,6 +20,7 @@ constructor() {
 fetchAll(): void {
   this.http.get<Movimiento[]>(this.apiUrl).subscribe({
     next: (data) => {
+      console.log("Movimientos recibidos del backend:", data);
       const ordenados = data.sort((a, b) => {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
       });

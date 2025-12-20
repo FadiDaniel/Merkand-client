@@ -19,7 +19,10 @@ export class ProveedorService {
 
   fetchAll(): void {
     this.http.get<Proveedor[]>(this.apiUrl).subscribe({
-      next: (data) => this.proveedores.set(data),
+      next: (data) => {
+        this.proveedores.set(data);
+        console.log("Proveedores recibidos del backend:", data);
+      },
       error: (err) => console.error('Error fetching suppliers', err)
     });
   }
