@@ -1,156 +1,92 @@
-# Sistema de Control de Inventario - Angular
+<div align="center">
+  
+  # Merkand Client - Web portal 🛒
+  
+  **[English](README.md) | [Español](README.es.md)**
+  
+  [![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=flat&logo=angular)](https://angular.dev/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+  [![Material](https://img.shields.io/badge/Material-21-757575?style=flat&logo=material-design)](https://material.angular.io/)
+</div>
 
-Sistema completo de gestión de inventario desarrollado con **Angular 21**, **Angular Material** y arquitectura moderna usando **Signals** y **Standalone Components**.
+A modern inventory management system built with **Angular 21**, featuring cutting-edge reactive patterns, standalone components, and a clean architecture designed for scalability and maintainability.
 
-## 🚀 Características
+> [!IMPORTANT]
+> This project requires the [Merkand-API](https://github.com/FadiDaniel/Merkand-API) backend for full functionality.
 
-### Funcionalidades Principales
+---
 
-- ✅ **Autenticación y Autorización** con roles (Admin/Usuario)
-- ✅ **Dashboard** con estadísticas en tiempo real
-- ✅ **Gestión de Productos** (CRUD completo)
-- ✅ **Gestión de Órdenes** (Entrada/Salida)
-- ✅ **Control de Movimientos** de inventario
-- ✅ **Gestión de Proveedores** (solo Admin)
-- ✅ **Reportes** de inventario y ventas
-- ✅ **Perfil de Usuario**
-- ✅ **Registro de Usuarios** (solo Admin)
+## ✨ Key Features
 
-### Tecnologías y Arquitectura
+### Core Functionality
+- 🔐 **Authentication & Authorization** with role-based access (Admin/Operator)
+- 📊 **Real-time Dashboard** with dynamic statistics and KPIs
+- 📦 **Product Management** - Complete CRUD operations
+- 🔄 **Order Management** - Handle IN/OUT transactions
+- 📈 **Movement Tracking** - Complete inventory movement history
+- 👥 **Supplier Management** - Admin-only supplier control
+- 📋 **Reports & Analytics** - Inventory and sales insights
+- 👤 **User Profile** - Personal account management
+- ➕ **User Registration** - Admin-controlled user creation
 
-#### Stack Tecnológico
+---
 
-- **Angular 21** - Framework principal
-- **Angular Material** - Componentes UI
-- **TypeScript 5.9** - Lenguaje de programación
-- **RxJS 7.8** - Programación reactiva
-- **Signals** - Manejo de estado reactivo
-- **PNPM** - Gestor de paquetes
+## 🏗️ Architecture & Modern Patterns
 
-#### Arquitectura
+This project showcases **modern Angular best practices** and serves as a reference implementation for enterprise-level applications.
 
-```
-src/app/
-├── core/                    # Servicios singleton y guards
-│   ├── guards/             # Guards de autenticación
-│   ├── services/           # Servicios core (Auth, Producto, Orden)
-│   └── interceptors/       # HTTP Interceptors (futuro)
-├── shared/                  # Componentes compartidos
-│   ├── components/         # Componentes reutilizables
-│   └── pipes/              # Pipes personalizados
-├── features/                # Módulos de funcionalidades
-│   ├── auth/               # Login y registro
-│   ├── dashboard/          # Dashboard principal
-│   ├── productos/          # Gestión de productos
-│   ├── ordenes/            # Gestión de órdenes
-│   ├── movimientos/        # Historial de movimientos
-│   ├── proveedores/        # Gestión de proveedores
-│   ├── reportes/           # Reportes y estadísticas
-│   └── perfil/             # Perfil de usuario
-├── models/                  # Interfaces y tipos
-└── layouts/                 # Layouts principales
-```
+### Technical Stack
+- **Angular 21** - Latest framework version with modern APIs
+- **Angular Material 21** - Comprehensive UI component library
+- **TypeScript 5.9** - Type-safe development
+- **RxJS 7.8** - Reactive programming patterns
+- **Signals** - Built-in reactive state management
+- **PNPM** - Fast, disk space efficient package manager
 
-## 📦 Instalación
+### Modern Angular Patterns
 
-### Prerrequisitos
-
-- Node.js 24.x o superior
-- PNPM 10.x
-- Angular CLI 21.x
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-
-```bash
-cd Merkand-client
-```
-
-2. **Instalar dependencias**
-
-```bash
-pnpm install
-```
-
-3. **Iniciar el servidor de desarrollo**
-
-```bash
-pnpm start
-# o
-ng serve
-```
-
-4. **Abrir en el navegador**
-
-```
-http://localhost:4200
-```
-
-## 🔐 Credenciales de Prueba
-
-### Usuario Administrador
-
-- **Usuario:** `admin`
-- **Contraseña:** `admin123`
-- **Permisos:** Acceso completo a todas las funcionalidades
-
-### Usuario Regular
-
-- **Usuario:** `usuario`
-- **Contraseña:** `user123`
-- **Permisos:** Acceso limitado (sin gestión de proveedores ni registro de usuarios)
-
-## 🏗️ Arquitectura y Patrones
-
-### Standalone Components
-
-Todos los componentes son standalone, eliminando la necesidad de NgModules:
+#### 🎯 Standalone Components
+Fully modular architecture without NgModules:
 
 ```typescript
 @Component({
   selector: 'app-productos',
-  imports: [MatCardModule, MatTableModule, ...],
+  imports: [MatCardModule, MatTableModule, CommonModule],
   templateUrl: './productos.component.html'
 })
 export class ProductosComponent { }
 ```
 
-### Signals para Estado Reactivo
-
-Uso de Signals de Angular para manejo de estado:
+#### 🔔 Signals for Reactive State
+Efficient state management without Zone.js overhead:
 
 ```typescript
 private productos = signal<Producto[]>([]);
 readonly productos$ = this.productos.asReadonly();
 
-// Computed signals
+// Computed signals for derived state
 readonly productosStockBajo = computed(() =>
   this.productos().filter(p => p.stock <= p.stockMinimo)
 );
 ```
 
-### Control Flow Syntax
-
-Uso de la nueva sintaxis de control de flujo de Angular:
+#### 🎨 New Control Flow Syntax
+Cleaner, more performant templates using `@if` and `@for`:
 
 ```html
 @if (productos().length > 0) {
-<table mat-table [dataSource]="productos()">
-  @for (producto of productos(); track producto.id) {
-  <tr>
-    {{ producto.nombre }}
-  </tr>
-  }
-</table>
+  <table mat-table [dataSource]="productos()">
+    @for (producto of productos(); track producto.id) {
+      <tr>{{ producto.nombre }}</tr>
+    }
+  </table>
 } @else {
-<p>No hay productos</p>
+  <p>No products available</p>
 }
 ```
 
-### Dependency Injection con inject()
-
-Uso de la función `inject()` en lugar de constructor injection:
+#### 💉 Functional Dependency Injection
+Modern `inject()` pattern for cleaner code:
 
 ```typescript
 export class ProductosComponent {
@@ -159,9 +95,8 @@ export class ProductosComponent {
 }
 ```
 
-### Guards Funcionales
-
-Guards implementados como funciones en lugar de clases:
+#### 🛡️ Functional Guards
+Type-safe route guards as pure functions:
 
 ```typescript
 export const authGuard: CanActivateFn = () => {
@@ -170,82 +105,171 @@ export const authGuard: CanActivateFn = () => {
 };
 ```
 
-## 📊 Servicios Principales
+<details>
+<summary><b>📁 View Project Structure</b></summary>
+
+```
+src/app/
+├── core/                    # Singleton services & guards
+│   ├── guards/             # Authentication & authorization guards
+│   ├── services/           # Core services (Auth, Product, Order)
+│   └── interceptors/       # HTTP interceptors (future)
+├── shared/                  # Reusable components & utilities
+│   ├── components/         # Shared UI components
+│   └── pipes/              # Custom pipes
+├── features/                # Feature modules
+│   ├── auth/               # Login & registration
+│   ├── dashboard/          # Main dashboard
+│   ├── productos/          # Product management
+│   ├── ordenes/            # Order management
+│   ├── movimientos/        # Movement history
+│   ├── proveedores/        # Supplier management
+│   ├── reportes/           # Reports & analytics
+│   └── perfil/             # User profile
+├── models/                  # TypeScript interfaces & types
+└── layouts/                 # Application layouts
+```
+
+</details>
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- **Node.js** 24.x or higher
+- **PNPM** 10.x
+- **Angular CLI** 21.x
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/FadiDaniel/Merkand-client.git
+   cd Merkand-client
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Start development server**
+   ```bash
+   pnpm start
+   # or
+   ng serve
+   ```
+
+4. **Open in browser**
+   ```
+   http://localhost:4200
+   ```
+
+---
+
+## 🔐 Test Credentials
+
+| Role | Username | Password | Permissions |
+|------|----------|----------|-------------|
+| **Admin** | `admin1` | `admin1` | Full access to all features |
+| **User** | `user1` | `user1` | Limited access (no suppliers/user registration) |
+
+---
+
+## 📊 Core Services
 
 ### AuthService
-
-- Autenticación de usuarios
-- Manejo de sesión con localStorage
-- Computed signals para estado de autenticación
+- User authentication and session management
+- localStorage-based persistence
+- Computed signals for auth state
+- Role-based access control
 
 ### ProductoService
 
-- CRUD completo de productos
-- Validación de stock
-- Alertas de stock bajo
-- Persistencia en localStorage
+- Complete product CRUD operations
+- Stock validation and alerts
+- Low stock monitoring
+- Server-side persistence
 
 ### OrdenService
 
-- Creación de órdenes de entrada/salida
-- Validación de stock para salidas
-- Actualización automática de inventario
-- Generación de números de orden
+- IN/OUT order creation
+- Stock validation for outbound orders
+- Automatic inventory updates
+- Order generation
 
-## 🎨 Diseño y UI
 
-### Tema Personalizado
+---
 
-El proyecto usa un tema personalizado de Angular Material con paleta rose/red:
+## 🎨 UI & Design
+
+### Custom Material Theme
+Rose/red color palette with Roboto typography:
 
 ```scss
-@include mat.theme(
-  (
-    color: (
-      primary: mat.$rose-palette,
-      tertiary: mat.$red-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  )
-);
+@include mat.theme((
+  color: (
+    primary: mat.$rose-palette,
+    tertiary: mat.$red-palette,
+  ),
+  typography: Roboto,
+  density: 0,
+));
 ```
 
-### Componentes Material Utilizados
+### Material Components Used
+- **Layout**: Cards, Tables, Sidenav, Toolbars
+- **Forms**: Input fields, Select, Datepicker
+- **Navigation**: Menus, Tabs
+- **Feedback**: Dialogs, Snackbars
+- **Display**: Icons, Chips, Badges
 
-- Cards, Tables, Forms
-- Dialogs, Menus, Toolbars
-- Buttons, Icons, Chips
-- Sidenav, Tabs
-- Snackbars para notificaciones
-
-
-### Lazy Loading
-
-Los componentes secundarios usan lazy loading para optimizar la carga inicial:
+### Performance Optimization
+- **Lazy Loading** for secondary routes
+- **OnPush Change Detection** strategy
+- **TrackBy** functions in lists
+- **Computed Signals** for derived state
 
 ```typescript
 {
   path: 'reportes',
-  loadComponent: () => import('./features/reportes/...')
+  loadComponent: () => import('./features/reportes/reportes.component')
 }
-```
-
-
-## 🚀 Comandos Disponibles
-
-```bash
-# Desarrollo
-pnpm start          # Inicia servidor de desarrollo
-pnpm build          # Build de producción
-pnpm watch          # Build en modo watch
-
-# Testing (configurar)
-pnpm test           # Ejecuta tests unitarios
-
-# Linting
-ng lint             # Ejecuta linter
 ```
 
 ---
 
+## 🛠️ Available Commands
+
+```bash
+# Development
+pnpm start          # Start development server
+pnpm build          # Production build
+pnpm watch          # Build in watch mode
+
+# Testing
+pnpm test           # Run unit tests
+
+# Code Quality
+ng lint             # Run linter
+```
+
+---
+
+## 🔗 Related Projects
+
+- **[Merkand-API](https://github.com/FadiDaniel/Merkand-API)** - Spring Boot backend REST API
+
+---
+
+## 👨‍💻 Author
+
+**Fadi Daniel**
+- GitHub: [@FadiDaniel](https://github.com/FadiDaniel)
+
+---
+
+<div align="center">
+  <p>Built with ❤️ using Angular 21</p>
+</div>
