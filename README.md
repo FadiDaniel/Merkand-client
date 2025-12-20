@@ -1,6 +1,6 @@
 <div align="center">
   
-  # Merkand Client - Web portal 🛒
+  # Merkand Client - Web app 🛒
   
   **[English](README.md) | [Español](README.es.md)**
   
