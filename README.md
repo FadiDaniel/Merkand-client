@@ -31,6 +31,26 @@ A modern inventory management system built with **Angular 21**, featuring cuttin
 
 ---
 
+## 📸 Screenshots
+
+| Grafic reports |
+| :---: |
+| ![reports-1](./screenshots/reports-1.png) |
+
+| Main dashboard | Stock movements |
+| :---: | :---: |
+| ![Dashboard](./screenshots/dashboard.png) | ![Movimientos](./screenshots/stock-movements.png) |
+
+| Tab reports | Orders management |
+| :---: | :---: |
+| ![reports-2](./screenshots/reports-2.png) | ![Órdenes](./screenshots/orders.png) |
+
+| Product Stock | Suppliers |
+| :---: | :---: |
+| ![Productos](./screenshots/products.png) | ![Proveedores](./screenshots/suppliers.png) |
+
+---
+
 ## 🏗️ Architecture & Modern Patterns
 
 This project showcases **modern Angular best practices** and serves as a reference implementation for enterprise-level applications.
