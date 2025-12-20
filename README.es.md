@@ -31,6 +31,26 @@ Un sistema moderno de gestión de inventario construido con **Angular 21**, con 
 - ➕ **Registro de Usuarios** - Creación de usuarios controlada por administrador
 
 ---
+## 📸 Capturas de Pantalla
+
+| Reportes graficos |
+| :---: |
+| ![reports-1](./screenshots/reports-1.png) |
+
+| Dashboard principal | Movimientos de stock |
+| :---: | :---: |
+| ![Dashboard](./screenshots/dashboard.png) | ![Movimientos](./screenshots/stock-movements.png) |
+
+| Reportes tablas | Gestión de Órdenes |
+| :---: | :---: |
+| ![reports-2](./screenshots/reports-2.png) | ![Órdenes](./screenshots/orders.png) |
+
+| Stock de productos | Proveedores |
+| :---: | :---: |
+| ![Productos](./screenshots/products.png) | ![Proveedores](./screenshots/suppliers.png) |
+
+
+---
 
 ## 🏗️ Arquitectura y Patrones Modernos
 
