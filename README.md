@@ -249,4 +249,3 @@ ng lint             # Ejecuta linter
 
 ---
 
-**Nota:** Este proyecto usa datos simulados almacenados en localStorage. Para producción, se debe integrar con un backend real.
