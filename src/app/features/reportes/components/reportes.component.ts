@@ -372,7 +372,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     }
 
     .chart-card mat-card-title {
-      font-size: 16px;
+      font-size: 20px;
       font-weight: 600;
       color: #2c3e50;
       display: flex;
@@ -576,7 +576,7 @@ export class ReportesComponent {
           boxWidth: 12,
           padding: 10,
           font: {
-            size: 11
+            size: 14
           }
         }
       } 
