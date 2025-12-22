@@ -63,8 +63,8 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
 
         <mat-card class="kpi-card purple">
           <mat-icon>summarize</mat-icon>
-          <div class="kpi-value">{{ reporteService.productosCriticos().length }}</div>
-          <div class="kpi-label">Productos Críticos</div>
+          <div class="kpi-value">{{ reporteService.productosStagnant().length }}</div>
+          <div class="kpi-label">Productos sin ventas recientes</div>
         </mat-card>
       </div>
 
@@ -274,8 +274,9 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     .page-title { 
       margin-bottom: 24px; 
       font-weight: 400; 
-      color: #2c3e50;
-      font-size: 28px;
+      color: var(--merkand-gray-dark);
+      font-size: 32px;
+      font-weight: 500;
     }
 
     /* KPIs */
@@ -311,13 +312,13 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     }
     
     .kpi-value { 
-      font-size: 28px; 
+      font-size: 30px; 
       font-weight: 700; 
       margin: 8px 0; 
     }
     
     .kpi-label { 
-      font-size: 13px; 
+      font-size: 15px; 
       text-transform: uppercase; 
       opacity: 0.85;
       text-align: center;
@@ -332,14 +333,18 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     }
 
     .month-selector {
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
       border: 1px solid rgba(255,255,255,0.3);
       color: white;
       padding: 4px 8px;
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 15px;
       cursor: pointer;
       text-align: center;
+    }
+    .month-selector option {
+      background-color: #45cae2ff;
+      color: white;
     }
 
     .month-selector:focus {
@@ -397,7 +402,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     }
 
     .chart-wrapper {
-      height: 280px;
+      height: 380px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -573,8 +578,8 @@ export class ReportesComponent {
       legend: { 
         position: 'bottom',
         labels: {
-          boxWidth: 12,
-          padding: 10,
+          boxWidth: 32,
+          padding: 20,
           font: {
             size: 14
           }

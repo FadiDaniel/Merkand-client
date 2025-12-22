@@ -125,7 +125,7 @@ export class ReporteService {
 
   // --- Tablas de Datos ---
 
-  // Tabla 1: Inventario sin movimientos (CORREGIDO)
+  // Tabla 1: Inventario sin movimientos
   readonly productosStagnant = computed(() => {
     const hoy = new Date();
     const productos = this.productoService.productos$();
