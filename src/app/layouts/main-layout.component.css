@@ -13,10 +13,10 @@
 }
 
 .app-name {
-  font-size: 28px;
+  font-size: 38px;
   font-weight: 700;
   color: white;
-  margin: 0;
+  margin-left: 15px;
   letter-spacing: 1px;
 }
 
@@ -26,6 +26,15 @@
 
 .menu-button {
   color: white;
+  width: 55px !important;
+  height: 55px !important;
+  line-height: 55px !important;
+}
+
+.menu-button mat-icon {
+  font-size: 33px;
+  width: 33px;
+  height: 33px;
 }
 
 .drawer-container {
@@ -35,102 +44,60 @@
 
 .side-menu {
   width: 320px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
+  background-color: #ffffff;
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
 }
 
+.menu-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Header del menú */
 .menu-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background-color: var(--merkand-gray-dark);
-  color: white;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  flex-shrink: 0;
 }
 
 .menu-header h2 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
+  color: #333;
 }
 
-.menu-header button {
-  color: white;
-}
-
-.main-menu-items {
-  flex: 1;
-  padding: 16px 0;
-}
-
-.main-menu-items mat-list-item {
-  height: 64px;
-  font-size: 16px;
-  cursor: pointer;
+.close-button {
+  color: #666;
   transition: background-color 0.2s;
 }
 
-.main-menu-items mat-list-item:hover {
-  background-color: #f8f9fa;
+.close-button:hover {
+  background-color: #f5f5f5;
 }
 
-.main-menu-items mat-icon {
-  color: var(--merkand-gray-medium);
-  margin-right: 16px;
-}
-
-.logout-item {
-  color: var(--merkand-primary);
-  font-weight: 500;
-}
-
-.logout-item mat-icon {
-  color: var(--merkand-primary);
-}
-
-mat-divider {
-  margin: 16px 0;
-}
-
-.secondary-menu-items {
-  padding: 8px 0;
-  background-color: #f8f9fa;
-  border-top: 1px solid var(--merkand-gray-light);
-}
-
-.secondary-item {
-  height: 56px;
-  opacity: 0.7;
-  font-size: 14px;
-}
-
-.secondary-item:hover {
-  opacity: 1;
-  background-color: #e9ecef;
-}
-
-.secondary-item mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-}
-
+/* INFO DE USUARIO - PRIMER ELEMENTO */
 .user-info {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px;
-  background-color: var(--merkand-gray-dark);
-  color: white;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+  background-color: #f8f9fa;
+  color: #333;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
 }
 
 .user-info mat-icon {
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: white;
+  color: var(--merkand-gray-medium);
 }
 
 .user-details {
@@ -141,15 +108,162 @@ mat-divider {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: var(--merkand-gray-dark);
 }
 
 .user-role {
   margin: 4px 0 0 0;
   font-size: 13px;
-  opacity: 0.8;
+  color: var(--merkand-gray-medium);
+  opacity: 0.9;
+}
+
+/* Items principales  */
+.main-menu-items {
+  flex: 1;
+  padding: 8px 0;
+  overflow-y: auto;
+}
+
+.menu-item:hover {
+  color: var(--merkand-primary-dark);
+  text-decoration: underline; 
+  background-color: #f5f5f5;
+}
+
+.secondary-item:hover {
+  color: var(--merkand-primary-dark);
+  text-decoration: underline; 
+  background-color: #f5f5f5;
+}
+
+/* Estilos para todos los items del menú */
+::ng-deep .main-menu-items .mat-list-item,
+::ng-deep .secondary-menu-items .mat-list-item {
+  height: auto !important;
+  padding: 0 !important;
+  margin: 4px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .main-menu-items .mat-list-item:hover,
+::ng-deep .secondary-menu-items .mat-list-item:hover {
+  background-color: #f5f5f5 !important;
+}
+
+::ng-deep .main-menu-items .mat-list-item-content,
+::ng-deep .secondary-menu-items .mat-list-item-content {
+  padding: 12px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* Iconos principales */
+::ng-deep .main-menu-items .mat-list-item-icon {
+  margin-right: 0 !important;
+  color: var(--merkand-primary) !important;
+}
+
+/* Títulos */
+::ng-deep .main-menu-items .mat-list-item-title {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  color: #333 !important;
+}
+
+/* Divider */
+mat-divider {
+  margin: 8px 24px !important;
+  border-top-color: #e0e0e0;
+}
+
+/* Logout item */
+.logout-item {
+  color: #f44336 !important;
+}
+
+.logout-item:hover {
+  background-color: #ffebee !important;
+}
+
+.logout-item mat-icon {
+  color: #f44336 !important;
+}
+
+/* BOTONES SECUNDARIOS - FOOTER */
+.secondary-menu-items {
+  padding: 8px 0;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  margin-bottom: 28px;
+}
+
+::ng-deep .secondary-menu-items .mat-list-item-icon {
+  color: #999 !important;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+::ng-deep .secondary-menu-items .mat-list-item-title {
+  font-size: 14px !important;
+  color: #666 !important;
+}
+
+.menu-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .main-content {
   min-height: calc(100vh - 64px);
   padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-content {
+  flex: 1;
+}
+
+/* FOOTER DASHBOARD */
+.dashboard-footer {
+  padding: 16px;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--merkand-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--merkand-primary-dark);
+  text-decoration: underline;
+}
+
+.dashboard-footer{
+  font-size: 18px;
+  margin-bottom: 13px;
+}
+
+.github-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }

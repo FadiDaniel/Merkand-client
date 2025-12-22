@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartOptions } from 'chart.js';
 import { ReporteService } from '../../../core/services/reporte.service';
-import { CurrencyPipe, DecimalPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { BackButtonComponent } from '../../../shared/components/back-button.component';
 
 @Component({
@@ -23,7 +23,6 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
     MatFormFieldModule,
     BaseChartDirective, 
     CurrencyPipe, 
-    DecimalPipe, 
     DatePipe,
     BackButtonComponent
   ],

@@ -1,9 +1,7 @@
 <div class="main-layout">
     <mat-toolbar color="primary" class="header">
         <h1 class="app-name">Merkand</h1>
-
         <span class="spacer"></span>
-
         <button mat-icon-button (click)="drawer.toggle()" class="menu-button">
             <mat-icon>menu</mat-icon>
         </button>
@@ -11,51 +9,16 @@
 
     <mat-drawer-container class="drawer-container">
         <mat-drawer #drawer mode="over" position="end" class="side-menu">
+            <div class="menu-content-wrapper">
+            <!-- Header del menú -->
             <div class="menu-header">
                 <h2>Menú</h2>
-                <button mat-icon-button (click)="drawer.close()">
+                <button mat-icon-button (click)="drawer.close()" class="close-button">
                     <mat-icon>close</mat-icon>
                 </button>
             </div>
 
-            <mat-nav-list class="main-menu-items">
-                <mat-list-item (click)="navigateToProfile(); drawer.close()">
-                    <mat-icon matListItemIcon>person</mat-icon>
-                    <span matListItemTitle>Perfil del usuario</span>
-                </mat-list-item>
-
-                @if (isAdmin()) {
-                <mat-list-item [routerLink]="['/registro']" (click)="drawer.close()">
-                    <mat-icon matListItemIcon>person_add</mat-icon>
-                    <span matListItemTitle>Registrar nuevo usuario</span>
-                </mat-list-item>
-                }
-
-                <mat-list-item (click)="navigateTo('/contacto'); drawer.close()">
-                    <mat-icon matListItemIcon>contact_mail</mat-icon>
-                    <span matListItemTitle>Contacta con nosotros</span>
-                </mat-list-item>
-
-                <mat-divider></mat-divider>
-
-                <mat-list-item (click)="logout(); drawer.close()" class="logout-item">
-                    <mat-icon matListItemIcon>logout</mat-icon>
-                    <span matListItemTitle>Cerrar sesión</span>
-                </mat-list-item>
-            </mat-nav-list>
-
-            <div class="secondary-menu-items">
-                <mat-list-item (click)="navigateTo('/legal'); drawer.close()" class="secondary-item">
-                    <mat-icon matListItemIcon>gavel</mat-icon>
-                    <span matListItemTitle>Información legal</span>
-                </mat-list-item>
-
-                <mat-list-item (click)="navigateTo('/ayuda'); drawer.close()" class="secondary-item">
-                    <mat-icon matListItemIcon>help</mat-icon>
-                    <span matListItemTitle>Ayuda</span>
-                </mat-list-item>
-            </div>
-
+            <!-- INFO DE USUARIO -->
             <div class="user-info">
                 <mat-icon>account_circle</mat-icon>
                 <div class="user-details">
@@ -63,10 +26,63 @@
                     <p class="user-role">{{ isAdmin() ? 'Administrador' : 'Usuario' }}</p>
                 </div>
             </div>
+
+            <!-- Items principales -->
+            <mat-nav-list class="main-menu-items">
+                <mat-list-item (click)="navigateToProfile(); drawer.close()" class="menu-item">
+                    <mat-icon matListItemIcon>person</mat-icon>
+                    <div matListItemTitle>Perfil del usuario</div>
+                </mat-list-item>
+
+                @if (isAdmin()) {
+                <mat-list-item [routerLink]="['/registro']" (click)="drawer.close()" class="menu-item">
+                    <mat-icon matListItemIcon>person_add</mat-icon>
+                    <div matListItemTitle>Registrar nuevo usuario</div>
+                </mat-list-item>
+                }
+
+                <mat-list-item (click)="navigateTo('/contacto'); drawer.close()" class="menu-item">
+                    <mat-icon matListItemIcon>contact_mail</mat-icon>
+                    <div matListItemTitle>Contacta con nosotros</div>
+                </mat-list-item>
+
+                <mat-divider></mat-divider>
+
+                <mat-list-item (click)="logout(); drawer.close()" class="logout-item">
+                    <mat-icon matListItemIcon>logout</mat-icon>
+                    <div matListItemTitle>Cerrar sesión</div>
+                </mat-list-item>
+            </mat-nav-list>
+
+            <!-- BOTONES SECUNDARIOS - FOOTER -->
+            <div class="secondary-menu-items">
+                <mat-list-item (click)="navigateTo('/legal'); drawer.close()" class="secondary-item">
+                    <mat-icon matListItemIcon>gavel</mat-icon>
+                    <div matListItemTitle>Información legal</div>
+                </mat-list-item>
+
+                <mat-list-item (click)="navigateTo('/ayuda'); drawer.close()" class="secondary-item">
+                    <mat-icon matListItemIcon>help</mat-icon>
+                    <div matListItemTitle>Ayuda</div>
+                </mat-list-item>
+            </div>
+        </div>
         </mat-drawer>
 
         <mat-drawer-content class="main-content">
-            <router-outlet></router-outlet>
+            <div class="page-content">
+                <router-outlet></router-outlet>
+            </div>
+            
+            <footer class="dashboard-footer">
+                <span>Aplicación desarrollada por</span>
+                <a href="https://github.com/FadiDaniel" target="_blank" class="footer-link">
+                    <svg viewBox="0 0 24 24" class="github-icon" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    @FadiDaniel
+                </a>
+            </footer>
         </mat-drawer-content>
     </mat-drawer-container>
 </div>
