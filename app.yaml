@@ -1,0 +1,15 @@
+runtime: nodejs22
+instance_class: F1
+service: merkand-client # o Default
+
+handlers:
+  - url: /(.*\.(js|css|png|jpg|svg|ico|json))$
+    static_files: dist/Merkand-client/browser/\1
+    upload: dist/Merkand-client/browser/.*\.(js|css|png|jpg|svg|ico|json)$
+
+  - url: /assets/(.*)
+    static_dir: dist/Merkand-client/browser/assets
+
+  - url: /.*
+    static_files: dist/Merkand-client/browser/index.html
+    upload: dist/Merkand-client/browser/index.html
