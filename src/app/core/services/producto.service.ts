@@ -28,6 +28,10 @@ export class ProductoService {
     });
   }
 
+  getProductosAsObservable() {
+    return this.http.get<Producto[]>(this.apiUrl);
+  }
+
   getById(id: number): Producto | undefined {
     return this.productos().find(p => p.id == id);
   }

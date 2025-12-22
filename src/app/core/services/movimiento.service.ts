@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { Movimiento, CreateMovimientoDto } from '../../models/movimiento.model';
 import { ProductoService } from './producto.service';
 import { HttpClient } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +18,25 @@ constructor() {
     this.fetchAll(); 
   }
 
+
 fetchAll(): void {
-  this.http.get<Movimiento[]>(this.apiUrl).subscribe({
-    next: (data) => {
-      console.log("Movimientos recibidos del backend:", data);
-      const ordenados = data.sort((a, b) => {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
-      this.movimientos.set(ordenados);
+  forkJoin({
+    movs: this.http.get<Movimiento[]>(this.apiUrl),
+    prods: this.productoService.getProductosAsObservable() 
+  }).subscribe({
+    next: ({ movs, prods }) => {
+      const procesados = movs.map(m => {
+        const producto = prods.find(p => p.id === m.productId);
+        return {
+          ...m,
+          productName: producto ? producto.name : 'Producto no encontrado'
+        };
+      }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+      this.movimientos.set(procesados);
+      console.log("Movimientos procesados con éxito");
     },
-    error: (err) => console.error('Error al obtener movimientos', err)
+    error: (err) => console.error('Error en la carga combinada', err)
   });
 }
 
