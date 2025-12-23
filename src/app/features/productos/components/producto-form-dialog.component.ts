@@ -1,4 +1,4 @@
-import { Component, Inject, signal } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ interface DialogData {
 
 @Component({
   selector: 'app-producto-form-dialog',
+  standalone: true,
   imports: [
     FormsModule,
     MatDialogModule,
@@ -23,6 +24,7 @@ interface DialogData {
     MatSelectModule
   ],
   template: `
+  <div class="container">
     <h2 mat-dialog-title>{{ data.mode === 'create' ? 'Nuevo Producto' : 'Editar Producto' }}</h2>
     
     <mat-dialog-content>
@@ -39,12 +41,12 @@ interface DialogData {
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Categoría</mat-label>
-          <mat-select [(ngModel)]="formData.category" name="category" required>
-            <mat-option value="Electrónica">Electrónica</mat-option>
-            <mat-option value="Accesorios">Accesorios</mat-option>
-            <mat-option value="Componentes">Componentes</mat-option>
-            <mat-option value="Periféricos">Periféricos</mat-option>
-            <mat-option value="Software">Software</mat-option>
+          <mat-select class="select" [(ngModel)]="formData.category" name="category" required>
+            <mat-option value="Lácteos">Lácteos</mat-option>
+            <mat-option value="Frutas">Frutas</mat-option>
+            <mat-option value="Verduras">Verduras</mat-option>
+            <mat-option value="Carnes">Carnes</mat-option>
+            <mat-option value="Bebidas">Bebidas</mat-option>
             <mat-option value="Otros">Otros</mat-option>
           </mat-select>
         </mat-form-field>
@@ -53,7 +55,7 @@ interface DialogData {
           <mat-form-field appearance="outline">
             <mat-label>Precio</mat-label>
             <input matInput type="number" [(ngModel)]="formData.price" name="price" required min="0" step="0.01">
-            <span matPrefix>$&nbsp;</span>
+            <span matSuffix>€ &nbsp; &nbsp; &nbsp; </span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -68,20 +70,56 @@ interface DialogData {
         </div>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Proveedor</mat-label>
-          <input matInput [(ngModel)]="formData.supplierName" name="supplierName" required>
+          <mat-label>Categoría</mat-label>
+          <mat-select class="select" [(ngModel)]="formData.category" name="category" required>
+            <mat-option value="Carnicerias el campo">Carnicerias el campo</mat-option>
+            <mat-option value="Coca-Cola">Coca-Cola</mat-option>
+            <mat-option value="Polleria la campana">Polleria la campana</mat-option>
+            <mat-option value="Mi campiña">Mi campiña</mat-option>
+            <mat-option value="Juicis">Juicis</mat-option>
+            <mat-option value="Otros">Otros</mat-option>
+          </mat-select>
         </mat-form-field>
       </form>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
-      <button mat-button (click)="onCancel()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!productoForm.valid">
+      <button class="btn" mat-button (click)="onCancel()">Cancelar</button>
+      <button class="btn" mat-button (click)="onSave()" [disabled]="!productoForm.valid">
         {{ data.mode === 'create' ? 'Crear' : 'Guardar' }}
       </button>
     </mat-dialog-actions>
+  </div>
   `,
   styles: [`
+    :host {
+      display: block;
+    }
+
+    .btn {
+      background-color: white;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .btn:hover {
+      background-color: #eaeaea73;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    ::ng-deep .mat-mdc-select-panel {
+      background: white !important;
+    }
+
     mat-dialog-content {
       min-width: 500px;
       padding: 20px 24px;
@@ -90,6 +128,7 @@ interface DialogData {
     .full-width {
       width: 100%;
       margin-bottom: 16px;
+      padding: 9px;
     }
 
     .form-row {

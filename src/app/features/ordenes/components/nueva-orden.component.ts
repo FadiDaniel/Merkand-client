@@ -45,7 +45,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
                 <mat-label>Tipo de Orden</mat-label>
                 <mat-select [(ngModel)]="tipoOrden" name="tipo" (selectionChange)="onTipoChange()" required>
                   <mat-option value="entrada">Entrada (Compra)</mat-option>
-                  <mat-option value="salida">Salida (Venta/Ajuste)</mat-option>
+                  <mat-option value="salida">Salida (Venta)</mat-option>
                 </mat-select>
               </mat-form-field>
 
@@ -96,43 +96,45 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
               </button>
             </div>
 
-            <table mat-table [dataSource]="productosOrden()" class="productos-table">
-              <ng-container matColumnDef="nombre">
-                <th mat-header-cell *matHeaderCellDef>Producto</th>
-                <td mat-cell *matCellDef="let item">{{ item.nombreProducto }}</td>
-              </ng-container>
+            @if (productosOrden().length > 0) {
+              <table mat-table [dataSource]="productosOrden()" class="productos-table">
+                <ng-container matColumnDef="nombre">
+                  <th mat-header-cell *matHeaderCellDef>Producto</th>
+                  <td mat-cell *matCellDef="let item">{{ item.productName }}</td>
+                </ng-container>
 
-              <ng-container matColumnDef="cantidad">
-                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-                <td mat-cell *matCellDef="let item">{{ item.cantidad }}</td>
-              </ng-container>
+                <ng-container matColumnDef="cantidad">
+                  <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+                  <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+                </ng-container>
 
-              <ng-container matColumnDef="precio">
-                <th mat-header-cell *matHeaderCellDef>Precio Unit.</th>
-                <td mat-cell *matCellDef="let item">{{ item.precioUnitario | currency }}</td>
-              </ng-container>
+                <ng-container matColumnDef="precio">
+                  <th mat-header-cell *matHeaderCellDef>Precio Unit.</th>
+                  <td mat-cell *matCellDef="let item">{{ item.unitPrice | currency:'€' }}</td>
+                </ng-container>
 
-              <ng-container matColumnDef="subtotal">
-                <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-                <td mat-cell *matCellDef="let item">{{ item.subtotal | currency }}</td>
-              </ng-container>
+                <ng-container matColumnDef="subtotal">
+                  <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+                  <td mat-cell *matCellDef="let item">{{ item.subTotal | currency:'€' }}</td>
+                </ng-container>
 
-              <ng-container matColumnDef="acciones">
-                <th mat-header-cell *matHeaderCellDef>Acciones</th>
-                <td mat-cell *matCellDef="let item; let i = index">
-                  <button mat-icon-button color="warn" (click)="eliminarProducto(i)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </td>
-              </ng-container>
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                  <td mat-cell *matCellDef="let item; let i = index">
+                    <button mat-icon-button color="warn" (click)="eliminarProducto(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-            </table>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
 
-            <div class="total-section">
-              <h2>Total: {{ total() | currency }}</h2>
-            </div>
+              <div class="total-section">
+                <h2>Total: {{ total() | currency:'€' }}</h2>
+              </div>
+            }
 
             <div class="actions">
               <button mat-button type="button" (click)="onCancel()">Cancelar</button>
@@ -158,6 +160,11 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
       font-weight: 500;
       margin-bottom: 24px;
       color: #333;
+    }
+
+    mat-card {
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .form-row {
@@ -191,6 +198,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
       width: 100%;
       margin-bottom: 24px;
       border: 1px solid #eee;
+      background: white;
     }
 
     .total-section {
@@ -212,6 +220,14 @@ import { BackButtonComponent } from '../../../shared/components/back-button.comp
       justify-content: flex-end;
       gap: 12px;
     }
+
+    ::ng-deep .mat-mdc-select-panel {
+      background: white !important;
+    }
+
+    ::ng-deep .cdk-overlay-pane {
+      z-index: 1000;
+    }
   `]
 })
 export class NuevaOrdenComponent {
@@ -225,10 +241,10 @@ export class NuevaOrdenComponent {
   displayedColumns: string[] = ['nombre', 'cantidad', 'precio', 'subtotal', 'acciones'];
   
   tipoOrden = signal<'entrada' | 'salida'>('entrada');
-  proveedorId = signal(null);
+  proveedorId = signal<number | null>(null);
   clienteRef = signal('');
   
-  productoSeleccionado = signal(null);
+  productoSeleccionado = signal<number | null>(null);
   cantidad = signal(1);
   productosOrden = signal<OrderItem[]>([]);
 
@@ -258,11 +274,11 @@ export class NuevaOrdenComponent {
     return false;
   });
 
-  constructor() {
-  }
-
   onTipoChange() {
-
+    this.productosOrden.set([]);
+    this.productoSeleccionado.set(null);
+    this.proveedorId.set(null);
+    this.clienteRef.set('');
   }
 
   onProveedorChange() {
@@ -278,20 +294,72 @@ export class NuevaOrdenComponent {
   }
 
   agregarProducto(): void {
+    const prodId = this.productoSeleccionado();
+    const cant = this.cantidad();
 
+    if (!prodId || cant <= 0) {
+      this.snackBar.open('Seleccione un producto y cantidad válida', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    const producto = this.productos().find(p => p.id === prodId);
+    if (!producto) {
+      this.snackBar.open('Producto no encontrado', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    // Validar stock para salidas
+    if (this.tipoOrden() === 'salida' && producto.stock < cant) {
+      this.snackBar.open('Stock insuficiente', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    // Verificar si ya existe en la lista
+    const existe = this.productosOrden().find(p => p.productId === prodId);
+    if (existe) {
+      this.snackBar.open('Este producto ya está en la lista', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    const nuevoItem: OrderItem = {
+      productId: producto.id,
+      productName: producto.name,
+      quantity: cant,
+      unitPrice: producto.price,
+      subTotal: producto.price * cant
+    };
+
+    this.productosOrden.update(prev => [...prev, nuevoItem]);
+    
+    // Resetear selección
+    this.productoSeleccionado.set(null);
+    this.cantidad.set(1);
+    
+    this.snackBar.open('Producto agregado', 'Cerrar', { duration: 2000 });
   }
 
   eliminarProducto(index: number): void {
     this.productosOrden.update(prev => prev.filter((_, i) => i !== index));
+    this.snackBar.open('Producto eliminado', 'Cerrar', { duration: 2000 });
   }
 
   onSubmit(): void {
-    console.log(this.productosOrden());
-  }
+    if (this.productosOrden().length === 0) {
+      this.snackBar.open('Agregue al menos un producto', 'Cerrar', { duration: 3000 });
+      return;
+    }
 
-  private getProveedorNombre(): string {
-    const prov = this.proveedores().find(p => p.id == this.proveedorId());
-    return prov ? prov.name : '';
+    const orden = {
+      tipo: this.tipoOrden(),
+      proveedorId: this.proveedorId(),
+      clienteRef: this.clienteRef(),
+      items: this.productosOrden(),
+      total: this.total()
+    };
+
+    console.log('Crear orden:', orden);
+    this.snackBar.open('Orden creada exitosamente', 'Cerrar', { duration: 3000 });
+    this.router.navigate(['/dashboard']);
   }
 
   onCancel(): void {

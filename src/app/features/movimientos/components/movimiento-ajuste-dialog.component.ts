@@ -24,6 +24,7 @@ import { CreateMovimientoDto } from '../../../models/movimiento.model';
     MatButtonModule
   ],
   template: `
+  <div class="dialog-container">
     <h2 mat-dialog-title>Registrar Ajuste de Inventario</h2>
     <mat-dialog-content>
       <form #ajusteForm="ngForm">
@@ -57,16 +58,41 @@ import { CreateMovimientoDto } from '../../../models/movimiento.model';
       </form>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
-      <button mat-button mat-dialog-close>Cancelar</button>
-      <button mat-raised-button color="primary" [disabled]="!ajusteForm.valid" (click)="guardar()">
+      <button class="btn" mat-button mat-dialog-close>Cancelar</button>
+      <button class="btn" mat-raised-button color="primary" [disabled]="!ajusteForm.valid" (click)="guardar()">
         Registrar
       </button>
     </mat-dialog-actions>
+  </div>
   `,
   styles: [`
     .full-width {
       width: 100%;
       margin-bottom: 16px;
+      padding: 8px;
+    }
+  
+    .btn {
+      background-color: white;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .btn:hover {
+      background-color: #eaeaea73;
+      color: #000;
+      border: 1px solid #ccc;
+    }
+
+    .dialog-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px;
+      background-color: #fff;
+    }
+    ::ng-deep .mat-mdc-select-panel {
+      background: white !important;
     }
   `]
 })

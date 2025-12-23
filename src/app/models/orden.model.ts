@@ -13,14 +13,14 @@ export interface Orden {
 }
 
 export interface OrderItem {
-  itemId: number;
+  itemId?: number;
   quantity: number;
   unitPrice: number;
   subTotal: number;
   productName: string;
   productId: number;
-  orderId: number;
-  orderNumber: string;
+  orderId?: number;
+  orderNumber?: string;
 }
 
 export interface CreateOrdenDto {    
